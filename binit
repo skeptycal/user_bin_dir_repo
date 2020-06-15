@@ -1,0 +1,50 @@
+#!/usr/bin/env zsh
+# -*- coding: utf-8 -*-
+    # shellcheck shell=bash
+    # shellcheck source=/dev/null
+    # shellcheck disable=2128
+
+#? ############################# skeptycal.com ################################
+#? binit - create symbolic links to [FILE(s)] in the current user's ~/bin folder
+
+. $(which ssm) >/dev/null 2>&1  # import standard script modules, if available
+
+ME=${0##*/}                     # location of this script
+ARGS=( ${@:1} )                 # list of cli arguments passed, including FILES to link
+BIN_DIR=$(realpath $HOME/bin)   # user's ~/bin folder
+
+
+# if no files are given, echo usage information and exit
+if [ -z "$ARGS" ]; then
+    echo " ${CANARY:-}${BOLD:-}$ME${RESET:-} - create symbolic links for ${GO:-}FILE(s)${RESET:-} in ${BLUE:-}~/bin${RESET:-}"
+    echo "    ${MAIN:-}Usage: ${CANARY:-}$ME ${GO:-}FILES(s)${RESET:-}"
+    return 1
+fi
+
+OPTIONS=                        # cli options passed
+FILES=                          # files to link
+
+# process cli args
+while [[ $# -gt 0 ]] && [[ "$1" == "--"* ]] ;
+
+
+
+for arg in $FILES; do
+    case $arg in
+        -*)
+        *)
+    esac
+
+# create a link in the ~/bin folder for each file in FILES
+main() {
+    for f in $FILES; do
+        # create links with backups in $BIN_DIR
+        ln -b $(realpath $f) $BIN_DIR # prefer hard links ... add -s for symbolic links
+        echo ${f##*/}
+    done;
+
+    # reload shell
+    $SHELL -l
+}
+
+main "$@"
