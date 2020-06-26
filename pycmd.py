@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-# run a shell comman
-#   - with CLI args
-#   - catch exceptions
-#   - log the results (default is append to `sp.log`)
+""" pycmd - run a shell command
+  - with CLI args
+  - catch exceptions
+  - log the results (default is append to `sp.log`)
+"""
 
 from subprocess import check_output
 from sys import argv
@@ -20,4 +21,5 @@ if len(argv) > 1:
                 f.write(e)
             except:
                 print(e)
+        finally:
             f.write("-" * 79)
