@@ -56,6 +56,11 @@ try:
 except NameError: # Python3
     unichr = chr
 
+try:
+    from string import whitespace
+except ImportError:
+    whitespace = ' \t\n\r\x0b\x0c'
+
 # Use Unicode characters instead of their ascii psuedo-replacements
 UNICODE_SNOB = 0
 
@@ -189,14 +194,16 @@ def unescape(s):
 
 
 def onlywhite(line):
-    """Return true if the line does only consist of whitespace characters."""
-    return re.search(r'\W',line) == None
-    # for c in line:
-    #     if c != " " and c != "  ":
-    #         return c == " "
-    # return line
+    """Return true if the line does only consist of whitespace characters.
 
+        alternate:
 
+            return bool(line.isspace())
+        """
+    for c in set(line):
+        if c not in whitespace:
+            return False
+    return True
 
 
 def optwrap(text):
@@ -328,7 +335,7 @@ def list_numbering_start(attrs):
         return 0
 
 
-class _html2text(HTMLParser.HTMLParser):
+class _Html2Text(HTMLParser.HTMLParser):
     def __init__(self, out=None, baseurl=""):
         HTMLParser.HTMLParser.__init__(self)
 
@@ -745,7 +752,7 @@ class _html2text(HTMLParser.HTMLParser):
                     self.drop_white_space = 0
 
             if puredata and not self.pre:
-                data = re.sub("\s+", " ", data)
+                data = re.sub(r"\s+", " ", data)
                 if data and data[0] == " ":
                     self.space = 1
                     data = data[1:]
@@ -843,7 +850,7 @@ def wrapwrite(text):
 
 
 def html2text_file(html, out=wrapwrite, baseurl=""):
-    h = _html2text(out, baseurl)
+    h = _Html2Text(out, baseurl)
     h.feed(html)
     h.feed("")
     return h.close()
