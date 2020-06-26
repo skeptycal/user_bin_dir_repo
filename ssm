@@ -22,10 +22,10 @@
     # echo -e "path: $SCRIPT_PATH"
 
 #? ######################## ssm modules
-    . "$(command -v ssm_constants)"
+    . "$(which ssm_constants)"
     # . "$(command -v ssm_init)"
-    . "$(command -v ssm_debug)"
-    . "$(command -v ssm_usage)"
+    . "$(which ssm_debug)"
+    . "$(which ssm_usage)"
 
 #? ####################### testing
     _run_tests() {
