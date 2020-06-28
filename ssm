@@ -14,6 +14,7 @@
     declare -x SSM_LOADED=${SSM_LOADED:='False'}
 
     declare -x SHELL_BIN="${SHELL##*/}"
+    declare -x BASH_SOURCE="${BASH_SOURCE:-$0}"
     declare -x SCRIPT_NAME="${BASH_SOURCE##*/}"
     declare -x SCRIPT_PATH="${BASH_SOURCE%/*}"
     # echo -e "bin: $SHELL_BIN"
