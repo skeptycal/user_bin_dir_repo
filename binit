@@ -21,19 +21,23 @@ if [ -z "$ARGS" ]; then
     return 1
 fi
 
+# todo - work in progress
+exit 1
+
 OPTIONS=                        # cli options passed
 FILES=                          # files to link
 
 # process cli args
 while [[ $# -gt 0 ]] && [[ "$1" == "--"* ]] ;
+# TODO - process options
 
 
-
-for arg in $FILES; do
-    case $arg in
-        -*)
-        *)
-    esac
+# TODO - process files
+    for arg in $FILES; do
+        case $arg in
+            -*)
+            *)
+        esac
 
 # create a link in the ~/bin folder for each file in FILES
 main() {
