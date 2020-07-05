@@ -34,37 +34,48 @@
     BASH_SOURCE="${0}"
     SCRIPT_NAME="${BASH_SOURCE##*/}"
     SCRIPT_PATH="${BASH_SOURCE%/*}"
+    REPO_PATH="$PWD"
     REPO_NAME="${PWD##*/}"
     TEMPLATE_PATH=$HOME/Documents/coding/template
 
     _debug_show_paths() {
         set -o shwordsplit
-        tmp='BASH_SOURCE SCRIPT_NAME SCRIPT_PATH PWD REPO_NAME TEMPLATE_PATH'
+        tmp='BASH_SOURCE SCRIPT_NAME SCRIPT_PATH REPO_PATH REPO_NAME TEMPLATE_PATH'
         for i in $tmp; do
             echo -e "${MAIN:-}${(r:15:)i} ... ${CANARY:-}${(P)i}${RESET:-}"
         done;
-        # echo -e "${MAIN:-}BASH_SOURCE:    ${CANARY:-}$BASH_SOURCE${RESET:-}"
-        # echo -e "${MAIN:-}SCRIPT_NAME:    ${CANARY:-}$SCRIPT_NAME${RESET:-}"
-        # echo -e "${MAIN:-}SCRIPT_PATH:    ${CANARY:-}$SCRIPT_PATH${RESET:-}"
-        # echo -e "${MAIN:-}PWD:            ${CANARY:-}$PWD${RESET:-}"
-        # echo -e "${MAIN:-}REPO_NAME:      ${CANARY:-}$REPO_NAME${RESET:-}"
-        # echo -e "${MAIN:-}TEMPLATE_PATH:  ${CANARY:-}$TEMPLATE_PATH${RESET:-}"
     }
-
-
     dir_list() {
+        cd $1
         ls -1Ad */
+        cd -
     }
 
-    file_list() {
-        # list directory contents from path $1
-        set -o shwordsplit
+    file_list_color() {
+        # list directory contents from path $1 with ansi color codes
+        # TODO - work in progress !!
+        [ -z $1 ] && { echo "${MAIN:-}$0:${WARN:-} missing path parameter${RESET:-}"; return 1 }
+        [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
         cd $1
         list=$(ls -1A "$1")
-        echo $list
         for f in $list; do
             [[ -f $f ]] && echo -e "${GO:-}${f}${RESET:-}";
             [[ -d $f ]] && echo -e "${ATTN:-}${f}${RESET:-}";
+        done;
+        cd -
+    }
+
+    file_list() {
+        # list directory contents from path $1 with ansi color codes
+        # TODO - work in progress !!
+        [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
+        SEARCH_PATH=${1:-$PWD}
+        cd $SEARCH_PATH
+        # ls -1A
+        list=$(ls -1A $SEARCH_PATH)
+        for f in $list; do
+            [[ -f $f ]] && echo -e "$f";
+            # [[ -d $f ]] && echo -e "$f";
         done;
         cd -
     }
@@ -89,22 +100,35 @@
         pip install -U wheel setuptools
     } >/dev/null 2>&1
 
+    _copy_files() {
+        # using -n - no clobber copy ... nothing overwritten
+        [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
+        copy_list=$(file_list $TEMPLATE_PATH)
+        for f in $copy_list; do
+            cp -n $TEMPLATE_PATH/$f $REPO_PATH;
+        done
+    }
+
     _commit_and_status(){
-        cp ${TEMPLATE_PATH}/.gitignore .
         echo "${CANARY:-}"
         python --version
         echo "${BLUE:-}"
         pip --version
+        pipenv install
         git add .
         git commit -m 'initial commit'
         git status
+        hub create
     }
 
     _main_loop(){
-        _debug_show_paths
-        file_list $TEMPLATE_PATH
-        # _setup_tools "$@"
-        # _commit_and_status "$@"
+        # _debug_show_paths
+        echo "setting up repo '$REPO_NAME'"
+        _setup_tools "$@"
+        echo "copying files ..."
+        _copy_files
+        echo "initial git commit and upload"
+        _commit_and_status
 
         # run the python portion now ...
         #   or call this from the python script at the start?
