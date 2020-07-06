@@ -1,0 +1,201 @@
+#!/usr/bin/env zsh
+# -*- coding: utf-8 -*-
+    # shellcheck shell=bash
+    # shellcheck source=/dev/null
+    # shellcheck disable=2015,2086
+
+declare -ix SET_DEBUG && SET_DEBUG=${SET_DEBUG:-0}   # set to 1 for verbose testing
+#?######################## SCRIPT FUNCTIONS
+    get_current_os_name() {
+        local uname && uname=$(uname)
+        if [ "$uname" = "Darwin" ]; then
+            echo "macOS"
+            return 0
+        elif [ "$uname" = "FreeBSD" ]; then
+            echo "freebsd"
+            return 0
+        elif [ "$uname" = "Linux" ]; then
+            local linux_platform_name
+            linux_platform_name="$(get_linux_platform_name)" || { echo "linux" && return 0; }
+
+            if [[ "$linux_platform_name" == "rhel.6" ]]; then
+                echo "$linux_platform_name"
+                return 0
+            elif [[ "$linux_platform_name" == alpine* ]]; then
+                echo "linux-musl"
+                return 0
+            else
+                echo "linux"
+                return 0
+            fi
+        fi
+
+        db_echo "OS name could not be detected: UName = $uname"
+        return 1
+        }
+
+    log_flag() { rain "#? ############################################################################"; }
+#?######################## FILE FUNCTIONS
+    hex_dump() { [[ -r "$1" ]] && od -A x -t x1z -v "$1"; }
+    url_encode() {
+        [[ -z "$1" ]] && return 64
+        encoded=$(php -r "echo rawurlencode('$1');") && return 0 || return "$EX_DATAERR"
+        }
+    url_decode() {
+        [[ -z "$1" ]] && return 1
+        decoded=$(php -r "echo rawurldecode('$1');") && return 0 || return "$EX_DATAERR"
+        }
+#?######################## PARAMETER HANDLING
+    parse_options() {
+        # parse basic options [help|test|usage|version] & SET_DEBUG
+        # TODO the 'exits' and lack of shifts make this function inadequate
+        # TODO use standard functions in a wrapper instead
+        case "$1" in
+        -h | --help | help)
+            set_man_page
+            echo "$MAN_PAGE"
+            return
+            # exit 0
+            ;;
+        -t | --test | test)
+            [[ ! "$SET_DEBUG" == '1' ]] && _run_tests "$@"
+            return
+            # exit 0
+            ;;
+        -u | --usage | usage)
+            me "$USAGE"
+            return
+            # exit 0
+            ;;
+        -v | --version | version)
+            ce "${MAIN}${NAME}${WHITE} (version ${VERSION})${RESET}"
+            return
+            # exit 0
+            ;;
+            # *) ;;
+        esac
+        }
+
+#?######################## SCRIPT TESTS
+    export_list() {
+        export -p | xargs
+        }
+#?######################## program debugging / logging / trace functions
+    yes_no() {
+        local yno
+        # Accept a Yes/no (default Yes) user response to prompt ($1 or default)
+        echo -n "${1:-[Yes/no]: }"
+        read -r yno
+        case "$yno" in
+        [nN] | [nN][oO])
+            return 1
+            ;;
+        *) # default 'Yes' ... see function no_yes for default 'No'
+            return 0
+            ;;
+        esac
+        }
+    no_yes() {
+        local yno
+        # Accept a yes/No (default No) user response to prompt ($1 or default)
+        echo -n "${1:-[No/yes]: }"
+        read -r yno
+        case "$yno" in
+        [yY] | [Yy][Ee][Ss])
+            return 1
+            ;;
+        *) # default 'No' ... see function yes_no for default 'Yes'
+            return 0
+            ;;
+        esac
+        }
+    exit_usage() {
+        # Print script usage and exit
+        # TODO replace with die()
+        # Parameters:
+        #   "$1" - specific message (e.g. 'file not found')
+        #   "$2" - optional usage text
+        die "$@"
+        }
+
+    show_exports() {
+        for var in $(export -p); do
+            if declare -p "$var"; then
+                true
+                # if the var exists, get the name of it ...
+            fi
+        done
+        }
+    get_function_list() {
+        grep "$1" '() {' | sed 's/\(\.*\)*() {/\1/' | sed 's/function //' | sed 's/^[# ]*//' | sed 's/cat//' | cut -d ' ' -f1
+        }
+
+    l() {
+        # added 'list' default parameter instead of 'help'
+        eval "launchctl ${*:-list}"
+        }
+
+#?######################## program control
+    null_it () { eval "$@" 2>/dev/null; }
+        # To suppress the error message any output to standard error
+        #   is sent to /dev/null using 2>/dev/null.
+
+    or_it () { eval "$@" || exit 0; }
+        # If a command fails an OR operation can be used to provide a fallback
+        #   (e.g. cat file.txt || exit 0. In this case an exit code of 0 is
+        #   returned even if tHERE is an error.
+
+    die_now() { exit "$1"; }
+#?######################## error reporting
+    errcho(){ >&2 echo "$@"; }
+        # REF: https://stackoverflow.com/questions/2990414/echo-that-outputs-to-stderr
+
+#?######################## error handling
+    _set_traps() {
+        cur_opts="$-"
+        debug_opts="axET"
+        set "-${cur_opts}${debug_opts}"
+        }
+
+    _trap_error() {
+        me "ERR: $ERR"
+        set "-${cur_opts}"
+        # return 0
+        }
+    _trap_debug() {
+        # return 0
+        ce "Script source:$MAIN $SCRIPT_SOURCE$RESET_FG $* \n"
+        attn "echo VARIABLE ($VARIABLE) is being used HERE."
+        }
+    _trap_exit() {
+        # https://stackoverflow.com/a/50270940/9878098
+        exitcode=$?
+        printf 'error executing script...\n' 1>&2
+        printf 'exit code returned: %s\n' "$exitcode"
+        printf 'the command executing at the time of the error was: %s\n' "$BASH_COMMAND"
+        printf 'command present on line: %d' "${BASH_LINENO[0]}"
+        # Some more clean up code can be added HERE before exiting
+        set "-${cur_opts}"
+        exec 4>&- 5>&- 6>&-
+        if [[ "$LOG" == '1' ]]; then
+            LOG='0'
+            exec 1>&4 2>&5
+            exec 4>&- 5>&-
+            attn "logging off ..."
+        fi
+
+        exit $exitcode
+        }
+#?######################## SCRIPT TESTS
+    db_echo() {
+        if [[ "$SET_DEBUG" == '1' ]]; then
+            warn "debug info ($(date "+%D %T")) - $*" >&2
+        fi
+        }
+
+    _ansi_color_sample_test() {
+        echo -e "${MAIN}C ${WARN}O ${COOL}L ${GO}O ${CHERRY}R   ${CANARY}T ${ATTN}E ${PURPLE}S ${RESET_FG}T"
+        echo -e "${MAIN}MAIN   ${WARN}WARN   ${COOL}COOL   ${GO}GO   ${CHERRY}CHERRY   ${CANARY}CANARY   ${ATTN}ATTN   ${RAIN}RAIN   ${RESET_FG}RESET_FG"
+        }
+
+#! ######################## entry point
