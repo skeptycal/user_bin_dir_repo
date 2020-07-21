@@ -1,11 +1,11 @@
 #!/usr/bin/env zsh
 # -*- coding: utf-8 -*-
-# shellcheck shell=bash
-# shellcheck source=/dev/null
-# shellcheck disable=SC1090,SC2128,SC2178
+    # shellcheck shell=bash
+    # shellcheck source=/dev/null
+    # shellcheck disable=SC1090,SC2128,SC2178
 
 #? ####################### debug
-    set +x
+    set -a
     # SET_DEBUG: set to 1 for verbose testing;
     #   set option -r for readonly (override future changes)
     declare -ix SET_DEBUG
@@ -13,34 +13,89 @@
 
     # get name of shell program without path info
     # e.g. instead of /bin/zsh, get zsh
-    declare -x SHELL_BIN && SHELL_BIN="${SHELL##*/}"
+    # declare -x SHELL_BIN && SHELL_BIN="${SHELL##*/}"
     # store current shell level
-    declare -x SHELL_LVL && SHELL_LVL=$SHLVL
+    # declare -x SHELL_LVL && SHELL_LVL=$SHLVL
 
-    # provide a BASH_SOURCE variable in zsh
-    # to ease the transition to zsh from bash
-    [[ "$SHELL_BIN" = 'zsh' ]] && BASH_SOURCE=${(%):-%N}
-    BASH_SOURCE="${BASH_SOURCE:-$0}"
+    [[ ${SHELL##*/} = 'zsh' ]] && BASH_SOURCE=${(%):-%N} || "${BASH_SOURCE:-$0}"
 
     # local script path and name
     SCRIPT_PATH=${BASH_SOURCE%/*}
-    SCRIPT_NAME=${BASH_SOURCE##*/}
+    # SCRIPT_NAME=${BASH_SOURCE##*/}
 
-    declare -ix SSM_LOADED
+    . $SCRIPT_PATH/ssm_constants
 
-#? ######################## main loop
-    _main_loop() {
-        # db_echo(){ [[ SET_DEBUG == 1 ]] && warn "$@"; }
-        . $SCRIPT_PATH/ssm_constants
-        . $SCRIPT_PATH/ssm_debug
-        . $SCRIPT_PATH/ssm_usage
+#? ####################### functions
+    db_echo() {
+        if [[ "$SET_DEBUG" == '1' ]]; then
+            warn "debug info ($(date "+%D %T")) - $*" >&2
+        fi
+        }
+    yes_no() {
+        local yno
+        # Accept a Yes/no (default Yes) user response to prompt ($1 or default)
+        echo -n "${1:-[Yes/no]: }"
+        read -r yno
+        case "$yno" in
+        [nN] | [nN][oO])
+            return 1
+            ;;
+        *) # default 'Yes' ... see function no_yes for default 'No'
+            return 0
+            ;;
+        esac
+        }
+    no_yes() {
+        local yno
+        # Accept a yes/No (default No) user response to prompt ($1 or default)
+        echo -n "${1:-[No/yes]: }"
+        read -r yno
+        case "$yno" in
+        [yY] | [Yy][Ee][Ss])
+            return 1
+            ;;
+        *) # default 'No' ... see function yes_no for default 'Yes'
+            return 0
+            ;;
+        esac
         }
 
-#! ######################## entry point
-    if (( SSM_LOADED == 1 )); then
-        [[ $SET_DEBUG == 1 ]] && db_echo "SSM already loaded ... standard script modules for macOS."
-    else
-        # echo "if SSM_LOADED: $SSM_LOADED"
-        _main_loop "$@"
-        SSM_LOADED=1
-    fi
+    color_test() {
+        echo -e "${MAIN}C ${WARN}O ${COOL}L ${GO}O ${CHERRY}R   ${CANARY}T ${ATTN}E ${PURPLE}S ${RESET_FG}T"
+        echo -e "${MAIN}MAIN   ${WARN}WARN   ${COOL}COOL   ${GO}GO   ${CHERRY}CHERRY   ${CANARY}CANARY   ${ATTN}ATTN   ${RAIN}RAIN   ${RESET_FG}RESET_FG"
+        }
+
+    hex_dump() { [[ -r "$1" ]] && od -A x -t x1z -v "$1"; }
+    url_encode() {
+        [[ -z "$1" ]] && return 64
+        encoded=$(php -r "echo rawurlencode('$1');") && return 0 || return "$EX_DATAERR"
+        }
+    url_decode() {
+        [[ -z "$1" ]] && return 1
+        decoded=$(php -r "echo rawurldecode('$1');") && return 0 || return "$EX_DATAERR"
+        }
+
+    get_current_os_name() {
+        local uname && uname=$(uname)
+        if [ "$uname" = "Darwin" ]; then
+            echo "macOS"
+            return 0
+        elif [ "$uname" = "FreeBSD" ]; then
+            echo "freebsd"
+            return 0
+        elif [ "$uname" = "Linux" ]; then
+            local linux_platform_name
+            linux_platform_name="$(get_linux_platform_name)" || { echo "linux" && return 0; }
+
+            if [[ "$linux_platform_name" == "rhel.6" ]]; then
+                echo "$linux_platform_name"
+                return 0
+            elif [[ "$linux_platform_name" == alpine* ]]; then
+                echo "linux-musl"
+                return 0
+            else
+                echo "linux"
+                return 0
+            fi
+        fi
+        }

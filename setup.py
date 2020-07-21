@@ -19,12 +19,12 @@
 from os import linesep as NL
 from pathlib import Path
 from sys import path as PYTHONPATH
-from typing import Dict, List, Mapping, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 from setuptools import find_packages, setup
 
 try:
-    DEFAULT_ENCODING
+    DEFAULT_ENCODING  # noqa
 except NameError:
     from locale import getpreferredencoding
     DEFAULT_ENCODING: str = getpreferredencoding(do_setlocale=True) or "utf-8"
@@ -45,10 +45,10 @@ if here not in PYTHONPATH:
     PYTHONPATH.insert(0, here)
 
 
-def table_print(data: (Mapping, Sequence), **kwargs):
-    ''' Prints a pretty version of a mapping or sequence. '''
+def table_print(data: (Dict, Sequence), **kwargs):
+    ''' ### Prints a pretty 'table' version of a dict or sequence. '''
     tmp: List = []
-    if isinstance(data, Mapping):
+    if isinstance(data, dict):
         tmp.extend(
             [f"{str(k):<15.15} :  {repr(v):<45.45}" for k, v in data.items()])
     elif isinstance(data, (list, tuple, set)):
@@ -63,26 +63,31 @@ def table_print(data: (Mapping, Sequence), **kwargs):
 
 
 def pip_safe_name(s: str):
-    """ Return a name that is converted to pypi safe format. """
+    """ ### Return a name that is converted to pypi safe format.
+
+        'pip-safe' means converted to lowercase with any space or dash
+        replaced with an underscore.
+        """
     return s.lower().replace("-", "_").replace(" ", "_")
 
 
 def get_file_contents(file_name: str = "readme.md",
                       search_list: List[str] = None):
-    """ Returns the text of the README file
+    """ ### Returns the text of the README file
 
-        The default file is `README.md` and is *NOT* case sensitive. (e.g. `README` is the same as `readme`)
-        Can load *any* text file, but the default search path is setup for readme files
 
-        ```
-        Search path = ["readme.md", "readme.rst", "readme", "readme.txt"]
-        ```
+        The default file is `README.md` and is *NOT* case sensitive.
+        (e.g. `README` is the same as `readme`)
+        This function can load *any* text file, but the default search path is
+        setup for readme files.
 
         Example:
 
         ```
-        long_description=readme()
+        search_path = ["readme.md", "readme.rst", "readme", "readme.txt"]
+        long_description=readme(filename='README.md', search_list=search_path)
         ```
+
         """
     if not search_list:
         search_list = ["readme.md", "readme.rst", "readme", "readme.txt"]
@@ -103,7 +108,8 @@ def get_file_contents(file_name: str = "readme.md",
             with open(find_path, mode="r", encoding=DEFAULT_ENCODING) as f:
                 return f.read()
         except IOError as e:
-            raise IOError(f"Cannot read from the project file '{find_path}'")
+            raise IOError(
+                f"Cannot read from the project file '{find_path}'{NL}{e}")
     else:
         raise FileNotFoundError(
             f"Cannot find project file '{file_name}' in project tree. Search list = {search_list}"
