@@ -1,0 +1,3 @@
+[submodule "masterblaster"]
+	path = masterblaster
+	url = ./masterblaster

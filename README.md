@@ -1,4 +1,4 @@
-# <title>
+# DEV Tools Template Repo
 
 ---
 
@@ -24,17 +24,71 @@ This is my software development setup for a MacBook Pro (mid-2015, 16g ram, 256g
 
 ## Installation
 
-**Warning:** If you want to use this setup, you should fork this repository, review the code, and make changes to suit your needs.
+>**Warning:** If you want to use this setup, you should fork this repository, review the code, and make changes to suit your needs. If you aren't sure, don't use it!
 
-If you aren't sure, don't use it! This setup works for me for what I do. Don’t blindly use my settings unless you know what that entails. It could make your system inoperable or at least very annoying to use! Use at your own risk!
+>This setup works for me for what I do. Don’t blindly use my settings unless you know what is going on. If parts of it do not apply, commment them out or delete them. Misuse could make your system inoperable or at least very annoying to use! Use at your own risk!
 
-### Using Git and the bootstrap script
+### Repo Setup
 
-You can clone the repository wherever you want. (I like to keep it in `~/.dotfiles`) The bootstrapper script will pull in the latest version and copy the files to your home folder.
+I use python quite a bit and throw in a bit of flask and Vue / Nuxt. The python ecosystem has a very fiddly system to isoloate the coding environment for each project. There are many [options available](), but as of now I have found this works best for my situation:
 
-```bash
-git clone https://github.com/skeptycal/dotfiles.git && cd .dotfiles && source bootstrap.sh
+You can clone this GitHub repository as a starting point:
+```sh
+git clone https://github.com/skeptycal/repo_template.git && cd repo_template && translate_template.sh
 ```
+
+This will automate most of the naming and prepping. I have included a list of steps used to create this environment from scratch so anyone can modify the process to their needs:
+
+1. **Pick a repo name:** This name is used in **MANY LOCATIONS** so choose one
+   you like a lot. I do not provide a way to automate changeing the name.
+   For this example, I'm using ***MasterBlaster*** for the name.
+
+2. **Location:** Make a directory and change to that directory:
+
+        mkdir MasterBlaster && cd MasterBlaster
+
+3. **Virtual Environment:** create a python environment:
+
+    (I use python3.x (latest) and I have several aliases setup for that)
+
+        alias py='python3 -m '
+
+    So to setup my environment, I use:
+
+        git init # always have a git repo in place to track changes
+        # this is the recommended way for python 3.6+
+        # older versions used pyenv or virtualenv ... time marches on ...
+        py venv venv # equivalent to python3 -m venv venv
+
+    This should get you setup with something like this:
+
+        ├── bin
+        │   ├── activate
+        │   ├── activate.csh
+        │   ├── activate.fish
+        │   ├── easy_install
+        │   ├── easy_install-3.5
+        │   ├── pip
+        │   ├── pip3
+        │   ├── pip3.5
+        │   ├── python -> python3.5
+        │   ├── python3 -> python3.5
+        │   └── python3.5 -> /Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5
+        ├── include
+        ├── lib
+        │   └── python3.5
+        │       └── site-packages
+        └── pyvenv.cfg
+
+    >I always use the same name for my virtual environment so all my scripts
+    work in any location. If you prefer different names for each one, there is
+    an environment variable that is set whenever a virtual environment is
+    active:
+
+
+ (I like to keep it in `~/.dotfiles`) The bootstrapper script will pull in the latest version and copy the files to your home folder.
+
+
 
 To update, `cd` into your local `.dotfiles` repository and then:
 
@@ -106,13 +160,10 @@ Suggestions/improvements
 
 [**Michael Treanor**](https://www.skeptycal.com)
 
-## Based primarily on the open source work of:
-
-[![twitter/mathias](http://gravatar.com/avatar/24e08a9ea84deb17ae121074d0f17125?s=70)](http://twitter.com/mathias "Follow @mathias on Twitter")
-
-[Mathias Bynens](https://mathiasbynens.be/)
 
 ## Thanks to…
+
+- [Mathias Bynens](https://mathiasbynens.be/)
 
 -   @ptb and [his _macOS Setup_ repository](https://github.com/ptb/mac-setup)
 -   [Ben Alman](http://benalman.com/) and his [dotfiles repository](https://github.com/cowboy/dotfiles)

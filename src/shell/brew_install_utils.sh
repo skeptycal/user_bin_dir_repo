@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # Ask for the administrator password upfront
 sudo -v
@@ -12,15 +12,17 @@ done 2>/dev/null &
 
 # Install command-line tools using Homebrew.
 
-# Make sure we’re using the latest Homebrew.
+# a few cleanup and checkup runs ...
+brew cleanup
+brew doctor
 brew update
-
-# Upgrade any already-installed formulae.
 brew upgrade
+brew cleanup
 
-# Save Homebrew’s installed location.
+# Store Homebrew’s installed location.
 BREW_PREFIX=$(brew --prefix)
 
+# ------------------------------------ Install Favorite Utilities
 # Install GNU core utilities (those that come with macOS are outdated).
 # Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
 brew install coreutils
@@ -31,21 +33,23 @@ brew install moreutils
 # Install GNU `find`, `locate`, `updatedb`, and `xargs`, `g`-prefixed.
 brew install findutils
 # Install GNU `sed`, overwriting the built-in `sed`.
-brew install gnu-sed --with-default-names
-# Install Bash 4.
-brew install bash
-brew install bash-completion2
+brew install gnu-sed
 
-# Switch to using brew-installed bash as default shell
-if ! fgrep -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
-  echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-  chsh -s "${BREW_PREFIX}/bin/bash";
+
+# Install latest Bash and Zsh
+# brew install bash bash-completion@2 bash-git-prompt
+brew install zsh zsh-autosuggestions zsh-completions zsh-syntax-highlighting
+
+# Switch to using brew-installed zsh as default shell
+if ! fgrep -q "$(brew --prefix zsh)" /etc/shells; then
+  echo "$(brew --prefix zsh)" | sudo tee -a /etc/shells;
+  chsh -s "$(brew --prefix zsh)";
 fi;
 
 # Install `wget` with IRI support.
-brew install wget --with-iri
+brew install wget # --with-iri # outdated option
 
-# Install GnuPG to enable PGP-signing commits.
+# Install latest GnuPG to enable PGP-signing commits.
 brew install gnupg
 
 # Install more recent versions of some macOS tools.
@@ -108,3 +112,4 @@ brew install zopfli
 
 # Remove outdated versions from the cellar.
 brew cleanup
+brew doctor
