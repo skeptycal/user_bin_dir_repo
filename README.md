@@ -28,13 +28,25 @@ This is my software development setup for a MacBook Pro (mid-2015, 16g ram, 256g
 
 >This setup works for me for what I do. Don’t blindly use my settings unless you know what is going on. If parts of it do not apply, commment them out or delete them. Misuse could make your system inoperable or at least very annoying to use! Use at your own risk!
 
+### Prerequisites
+
+These are basic utilities that anyone developing on macOS should have installed. Add these if you don't have them.
+
+```sh
+# Install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Install Git and utilities
+brew install git hub gpg
+```
+
 ### Repo Setup
 
 I use python quite a bit and throw in a bit of flask and Vue / Nuxt. The python ecosystem has a very fiddly system to isoloate the coding environment for each project. There are many [options available](), but as of now I have found this works best for my situation:
 
 You can clone this GitHub repository as a starting point:
 ```sh
-git clone https://github.com/skeptycal/repo_template.git && cd repo_template && translate_template.sh
+git clone https://github.com/skeptycal/user_bin_dir_repo.git && cd user_bin_dir_repo && translate_template.sh
 ```
 
 This will automate most of the naming and prepping. I have included a list of steps used to create this environment from scratch so anyone can modify the process to their needs:
@@ -51,8 +63,12 @@ This will automate most of the naming and prepping. I have included a list of st
 
     (I use python3.x (latest) and I have several aliases setup for that)
 
-        alias py='python3 -m '
-
+    ```sh
+    # default zsh shell (macOS Catalina and up)
+    alias py='python3 -m ' >~/.zshrc
+    # default bash shell (before macOS Catalina)
+    alias py='python3 -m ' >~/.bashprofile
+    ```
     So to setup my environment, I use:
 
         git init # always have a git repo in place to track changes
@@ -86,21 +102,11 @@ This will automate most of the naming and prepping. I have included a list of st
     active:
 
 
- (I like to keep it in `~/.dotfiles`) The bootstrapper script will pull in the latest version and copy the files to your home folder.
+        git push --set-upstream origin master
 
 
 
-To update, `cd` into your local `.dotfiles` repository and then:
 
-```bash
-source bootstrap.sh
-```
-
-Alternatively, to update while avoiding the confirmation prompt:
-
-```bash
-set -- -f; source bootstrap.sh
-```
 
 ### Specify the `$PATH`
 
