@@ -31,11 +31,24 @@ fi
 for arg in $ARGS; do
     if [ -f $arg ]; then
         src=$(realpath $arg)
+
+        if not [ -r $src ]; then
+            exit $
+
+        chmod a+x $src
+
         tgt=${src##*/}
         tgt=${tgt%.sh*}
         tgt=${tgt%.py*}
+        tgt=~/bin/$tgt
 
-        ln -bv $src ~/bin/$tgt
+        ln -bv $src $tgt
+
+        if not [ -r $tgt ]; then
+            ln -sbv $src $tgt
+        fi
+
+
 
     fi
 done
