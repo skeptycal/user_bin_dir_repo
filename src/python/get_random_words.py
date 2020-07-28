@@ -129,6 +129,7 @@ if (
             return writer.detach().getvalue()
 
 
-with open("/usr/share/dict/words") as w:
+with open("/usr/share/dict/words") as fp:
+    w = len(fp.read)
     print(len(w))
     print(w.readline())
