@@ -29,28 +29,27 @@ fi
 # prefer hard links; backups performed for files that are overwritten
 # remove extensions for sh and py files ... personal preference
 for arg in $ARGS; do
-    if [ -f $arg ]; then
-        src=$(realpath $arg)
-
-        if not [ -r $src ]; then
-            exit $
-
+    src=$(realpath $arg)
+    if [ -r $src ]; then
         chmod a+x $src
 
         tgt=${src##*/}
         tgt=${tgt%.sh*}
         tgt=${tgt%.py*}
+        tgt=${tgt%.php*}
         tgt=~/bin/$tgt
 
         ln -bv $src $tgt
 
-        if not [ -r $tgt ]; then
+        # if hardlink didn't work, try symbolic link
+        if ! [ -r $tgt ]; then
             ln -sbv $src $tgt
         fi
 
 
-
+    else
+        exit "${arg} (${src}) is not readable."
     fi
 done
 
-$SHELL -l
+# $SHELL -l
