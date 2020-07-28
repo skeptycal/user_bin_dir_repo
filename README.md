@@ -37,7 +37,7 @@ These are basic utilities that anyone developing on macOS should have installed.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 # Install Git and utilities
-brew install git hub gpg
+brew install git hub gpg python poetry
 ```
 
 ### Repo Setup
