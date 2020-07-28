@@ -12,4 +12,4 @@
 # inherit SET_DEBUG; default 0; set to 1 for verbose testing
 SET_DEBUG=${SET_DEBUG:-0}
 
-sudo find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
+find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
