@@ -84,17 +84,15 @@ dist/
 env/
 
 # general ignore files
-*temp*
+**/temp/
 *private*
 *bak*
-bak/
+**/bak/
 .oh-my-zsh/
 coding/
-extras/
-py_ssm/
-snippets/
 
-medium_token
+*private*
+*token
 .lesshst
 .pypirc
 .dircolors
