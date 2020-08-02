@@ -1,4 +1,4 @@
-""" autobin - ~/bin directory test package
+""" binit - ~/bin directory test package
     create and test cli automation scripts
     """
 

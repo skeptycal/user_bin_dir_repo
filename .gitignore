@@ -1,3 +1,6 @@
+# large files
+**/*/go/*
+
 # Files to ignore in main document tree (from .ignore)
 
 *hst*
@@ -414,7 +417,6 @@ $tf/
 *.jpe
 *.jpeg
 *.jpf
-*.jpg
 *.jpm
 *.jpx
 *.jsc
