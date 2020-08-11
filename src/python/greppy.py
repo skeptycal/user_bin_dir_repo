@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from sys import argv
+from autosysloguru import logger
 
 HERE = Path().cwd()
 
@@ -19,7 +20,6 @@ class colors:
     MAGENTA = '\033[35m'
     CYAN = '\033[36m'
     WHITE = '\033[37m'
-
 class styles:
     BOLD = '\033[1m'
     ITALIC = '\033[3m'
@@ -35,6 +35,7 @@ class styles:
 # *it is at position 20 in line 31
 # (lines start counting at 1, positions at 0)
 
+@logger.catch()
 def main(args=argv[1:]):
     line_no: int = 0
     char_no: int = 0
@@ -42,18 +43,16 @@ def main(args=argv[1:]):
         if not file_path.is_file():
             continue
         for arg in args:
-            # print(f"searching {file_path.name} for {arg}")
-            if arg in (data := file_path.open(mode='r').read()):
-                for i, line in enumerate(data.split('\n')):
-                    # print(i, ' - ', line)
-                    if arg in line:
-                        char_no = line.index(arg)
-                        line_no = i
-                        print(f"{colors.YELLOW}Found '{arg}' at {colors.RED}{styles.BRIGHT}line {line_no:<5} pos {char_no:<4}{styles.RESET}{colors.YELLOW} in '{file_path.name}'")
-                # print('\n'.join([f"{i:>3} {line}" for i, line in data.split('\n')[line_no-2:line_no+3]]))
-        # if any(args in Path(filename).open(mode='r')):
-        #     print(f"found ")
-
+            print(arg)
+            try:
+                if arg in (data := file_path.open(mode='r').read()):
+                    for i, line in enumerate(data.split('\n')):
+                        if arg in line:
+                            char_no = line.index(arg)
+                            line_no = i
+                            print(f"{colors.YELLOW}Found '{arg}' at {colors.RED}{styles.BRIGHT}line {line_no:<5} pos {char_no:<4}{styles.RESET}{colors.YELLOW} in '{file_path.name}'")
+            except:
+                pass
 
 if __name__ == "__main__":
     main()
