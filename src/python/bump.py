@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 import os
-import sys
 import subprocess
+import sys
+
 from subprocess import run
+
 from typing import Dict, Iterable, List, Tuple, Union
+
 
 try:
     import regex as re
