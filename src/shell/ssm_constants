@@ -16,19 +16,9 @@
     # declare -x TEMP_DIR && TEMP_DIR="$(mktemp -q -d -t "$(basename "$0").XXXXXX" 2>/dev/null || mktemp -q -d)"
     # declare -x TEMP_FILE && TEMP_FILE="$TEMP_DIR/tmp_proc_random.$$.$RANDOM"
     # declare -x SYS_USERID && SYS_USERID="$(id -un):$(id -gn)"
-#     declare -x HERE && HERE="$PWD"
-#     declare -x NL && NL='
-# '
-#? ######################## script repo defaults
-    declare -x NAME && NAME=${NAME:-"${BASH_SOURCE##*/}"}
-    declare -x VERSION && VERSION=${VERSION:-'1.4.0'}
-    declare -x DESC && DESC=${DESC:-'personalized Bash / Zsh functions for macOS'}
-    declare -x AUTHOR=${AUTHOR:-'Michael Treanor  <skeptycal@gmail.com>'}
-    declare -x COPYRIGHT=${COPYRIGHT:-'Copyright (c) 2020 Michael Treanor'}
-    declare -x LICENSE=${LICENSE:-'MIT <https://opensource.org/licenses/MIT>'}
-    declare -x GITHUB=${GITHUB:-'https://www.github.com/skeptycal'}
-    USAGE() { echo -e "${NAME:-'AutoSys'} [help|test|usage|version]"; }
-
+    declare -x HERE && HERE="$PWD"
+    declare -x NL && NL='
+'
 
 #? ######################## setup ANSI constants for common colors
     declare -x MAIN && MAIN=$(echo -en '\001\033[38;5;229m')
@@ -53,77 +43,7 @@
     # # shellcheck disable=SC2016
     # declare -x _debug_function_header_text='_header_test_log "Calling: ${CANARY:-}${FUNCNAME[0]} ${MAIN:-}$*${RESET:-}"'
 
-#? ######################## setup C++ style error messages
-    # reference: Advanced Bash-Scripting Guide
-    #   <http://tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF>
 
-    # from /usr/include/sysexits.h
-    # Copyright (c) 1987, 1993
-    # The Regents of the University of California.  All rights reserved.
-    declare -ix EX_OK=0                  # successful termination
-
-    # The Linux Documentation Project has a list of reserved codes that also offers advice on what code to use for specific scenarios. These are the standard error codes in Linux or UNIX.
-    declare -ix EX_ERROR=1               # catchall for general errors
-    declare -ix EX_SHELLERR=2            # misuse of shell builtins (BASH); missing keyword
-
-    declare -ix EX__BASE=64              # base value for error messages
-    declare -ix EX_USAGE=64              # command line usage error
-    declare -ix EX_DATAERR=65            # data format error
-    declare -ix EX_NOINPUT=66            # cannot open input
-    declare -ix EX_NOUSER=67             # addressee unknown
-    declare -ix EX_NOHOST=68             # host name unknown
-    declare -ix EX_UNAVAILABL=69         # service unavailable
-    declare -ix EX_SOFTWARE=70           # internal software error
-    declare -ix EX_OSERR=71              # system error (e.g., can't fork)
-    declare -ix EX_OSFILE=72             # critical OS file missing
-    declare -ix EX_CANTCREAT=73          # can't create (user) output file
-    declare -ix EX_IOERR=74              # input/output error
-    declare -ix EX_TEMPFAIL=75           # temp failure; user is invited to retry
-    declare -ix EX_PROTOCOL=76           # remote error in protocol
-    declare -ix EX_NOPERM=77             # permission denied
-    declare -ix EX_CONFIG=78             # configuration error
-    declare -ix EX__MAX=78               # maximum listed value
-
-    # Linux / Unix codes
-    declare -ix EX_CANTEXECUTE=126       # command invoked cannot execute
-    declare -ix EX_NOTFOUND=127          # command not found; possible $PATH error or typo
-    declare -ix EX_BADARG=128            # invalid argument
-    declare -ix EX_FATALARG=129          # fatal error
-    declare -ix EX_CTRL_C=130            # script terminated by Control-C
-
-#? ######################## setup trap signal messages
-    # https://linuxconfig.org/how-to-modify-scripts-behavior-on-signals-using-bash-traps
-    declare -ix TRAP_SIGHUP=1
-    declare -ix TRAP_SIGINT=1
-    declare -ix TRAP_SIGQUIT=1
-    declare -ix TRAP_SIGILL=1
-    declare -ix TRAP_SIGTRAP=1
-    declare -ix TRAP_SIGABRT=1
-    declare -ix TRAP_SIGEMT=1
-    declare -ix TRAP_SIGFPE=1
-    declare -ix TRAP_SIGKILL=1
-    declare -ix TRAP_SIGBUS=1
-    declare -ix TRAP_SIGSEGV=1
-    declare -ix TRAP_SIGSYS=1
-    declare -ix TRAP_SIGPIPE=1
-    declare -ix TRAP_SIGALRM=1
-    declare -ix TRAP_SIGTERM=1
-    declare -ix TRAP_SIGURG=1
-    declare -ix TRAP_SIGSTOP=1
-    declare -ix TRAP_SIGTSTP=1
-    declare -ix TRAP_SIGCONT=1
-    declare -ix TRAP_SIGCHLD=1
-    declare -ix TRAP_SIGTTIN=1
-    declare -ix TRAP_SIGTTOU=1
-    declare -ix TRAP_SIGIO=1
-    declare -ix TRAP_SIGXCPU=1
-    declare -ix TRAP_SIGXFSZ=1
-    declare -ix TRAP_SIGVTALRM=1
-    declare -ix TRAP_SIGPROF=1
-    declare -ix TRAP_SIGWINCH=1
-    declare -ix TRAP_SIGINFO=1
-    declare -ix TRAP_SIGUSR1=1
-    declare -ix TRAP_SIGUSR2=1
 
 
 #? ######################## setup functions for printing lines in common colors
@@ -144,28 +64,9 @@
     white() { ce "${WHITE:-}${*:-}" ; }
 
 #? ######################## setup default package description and usage
-# declare -x usage_long_desc && usage_long_desc="$(
-#     cat <<usage_long_desc
-#     ${MAIN:-}$NAME${WHITE:-} sets and exports standard script modules containing
-#     constants and functions for macOS
-#     Tested on ${LIME:-}macOS Catalina${WHITE:-} with ${COOL:-}Python ${CANARY:-}3.8${WHITE:-}
 
-#     Includes a few basic ANSI color constants:
-#     ${MAIN:-}MAIN  ${WARN:-}WARN  ${COOL:-}COOL  ${LIME:-}LIME  ${GO:-}GO  ${CHERRY:-}CHERRY  ${CANARY:-}CANARY  ${ATTN:-}ATTN  ${RAIN:-}RAIN  ${RESET:-}RESET
-# usage_long_desc
-# )"
-
-# declare -x usage_parameters && usage_parameters="$(
-#     cat <<usage_parameters
-#     help      - display complete usage information (this!)
-#     test      - perform script tests
-#     usage     - display short usage instructions
-#     version   - display version information
-# usage_parameters
-# )"
-
-# declare -x color_sample && color_sample="$(
-#     cat <<color_sample
-#     ${MAIN:-}MAIN  ${WARN:-}WARN  ${COOL:-}COOL  ${LIME:-}LIME  ${GO:-}GO  ${CHERRY:-}CHERRY  ${CANARY:-}CANARY  ${ATTN:-}ATTN  ${RAIN:-}RAIN  ${RESET:-}RESET
-# color_sample
-# )"
+declare -x color_sample && color_sample="$(
+    cat <<color_sample
+    ${MAIN:-}MAIN  ${WARN:-}WARN  ${COOL:-}COOL  ${LIME:-}LIME  ${GO:-}GO  ${CHERRY:-}CHERRY  ${CANARY:-}CANARY  ${ATTN:-}ATTN  ${RAIN:-}RAIN  ${RESET:-}RESET
+color_sample
+)"
