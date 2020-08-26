@@ -14,44 +14,54 @@ try:
 except ImportError:
     import re
 
-def shell(command: Union[str, List[str]], stdout: int = subprocess.PIPE, stderr: int = subprocess.STDOUT) -> subprocess.Popen:
+
+def shell(
+    command: Union[str, List[str]],
+    stdout: int = subprocess.PIPE,
+    stderr: int = subprocess.STDOUT,
+) -> subprocess.Popen:
     cmd_list: List[str]
     if isinstance(command, str):
-        cmd_list: List[str] = command.split(' ')
+        cmd_list: List[str] = command.split(" ")
     elif isinstance(command, (list, tuple, set)):
         cmd_list = list(command)
-    return subprocess.Popen(cmd_list,stdout=stdout,stderr=stderr)
+    return subprocess.Popen(cmd_list, stdout=stdout, stderr=stderr)
 
-def get_ls(filenames: str = '.', params: str = '-lAgG', ignore_errors:bool = False)-> str:
-    cmd_list: List[str] = ['ls']
+
+def get_ls(
+    filenames: str = ".", params: str = "-lAgG", ignore_errors: bool = False
+) -> str:
+    cmd_list: List[str] = ["ls"]
     if not filenames:
-        filenames = '.'
-    cmd_list.extend(filenames.split(' '))
-    cmd_list.extend(params.split(' '))
+        filenames = "."
+    cmd_list.extend(filenames.split(" "))
+    cmd_list.extend(params.split(" "))
     out: Popen = shell(cmd_list)
     stdout, stderr = out.communicate()
     if stderr and not ignore_errors:
         raise OSError(stderr)
     return stdout.decode()
 
+
 class File:
     mode: str
 
 
-def ls(filenames: str = '.', params: str = '-lAgG', ignore_errors: bool = False):
+def ls(filenames: str = ".", params: str = "-lAgG", ignore_errors: bool = False):
     data = get_ls(filenames=filenames, params=params, ignore_errors=ignore_errors)
 
     for line in data:
-        if line[0] == 'd':
+        if line[0] == "d":
             pass
     print(data)
+
 
 ls()
 
 # get_os_result=os.
 VERSION = shell("poetry version | cut -d ' ' -f 2")
 
-RE_SEMVER='^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
+RE_SEMVER = "^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
 
 # echo $VERSION
@@ -59,11 +69,11 @@ RE_SEMVER='^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(
 # The new version should ideally be a valid semver string or a valid bump rule:
 #   patch, minor, major, prepatch, preminor, premajor, prerelease.
 
-        # Patch version Z (x.y.Z | x > 0) MUST be incremented if only backwards compatible bug fixes are introduced. A bug fix is defined as an internal change that fixes incorrect behavior.
+# Patch version Z (x.y.Z | x > 0) MUST be incremented if only backwards compatible bug fixes are introduced. A bug fix is defined as an internal change that fixes incorrect behavior.
 
-        # Minor version Y (x.Y.z | x > 0) MUST be incremented if new, backwards compatible functionality is introduced to the public API. It MUST be incremented if any public API functionality is marked as deprecated. It MAY be incremented if substantial new functionality or improvements are introduced within the private code. It MAY include patch level changes. Patch version MUST be reset to 0 when minor version is incremented.
+# Minor version Y (x.Y.z | x > 0) MUST be incremented if new, backwards compatible functionality is introduced to the public API. It MUST be incremented if any public API functionality is marked as deprecated. It MAY be incremented if substantial new functionality or improvements are introduced within the private code. It MAY include patch level changes. Patch version MUST be reset to 0 when minor version is incremented.
 
-        # Major version X (X.y.z | X > 0) MUST be incremented if any backwards incompatible changes are introduced to the public API. It MAY also include minor and patch level changes. Patch and minor version MUST be reset to 0 when major version is incremented.
+# Major version X (X.y.z | X > 0) MUST be incremented if any backwards incompatible changes are introduced to the public API. It MAY also include minor and patch level changes. Patch and minor version MUST be reset to 0 when major version is incremented.
 
 
 # semver rules

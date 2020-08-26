@@ -53,13 +53,13 @@ except:
 
 try:
     tmp = unichr(1)
-except NameError: # Python3
+except NameError:  # Python3
     unichr = chr
 
 try:
     from string import whitespace
 except ImportError:
-    whitespace = ' \t\n\r\x0b\x0c'
+    whitespace = " \t\n\r\x0b\x0c"
 
 # Use Unicode characters instead of their ascii psuedo-replacements
 UNICODE_SNOB = 0
@@ -89,7 +89,7 @@ r_unescape = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
 
 
 def name2cp(k):
-    ''' translate common character name into unicode code point '''
+    """ translate common character name into unicode code point """
     if k == "apos":
         return ord("'")
     if hasattr(htmlentitydefs, "name2codepoint"):  # requires Python 2.3
@@ -453,9 +453,7 @@ class _Html2Text(HTMLParser.HTMLParser):
         parent_emphasis = google_text_emphasis(parent_style)
 
         # handle Google's text emphasis
-        strikethrough = (
-            "line-through" in tag_emphasis and options.hide_strikethrough
-        )
+        strikethrough = "line-through" in tag_emphasis and options.hide_strikethrough
         bold = "bold" in tag_emphasis and not "bold" in parent_emphasis
         italic = "italic" in tag_emphasis and not "italic" in parent_emphasis
         fixed = (
@@ -703,9 +701,7 @@ class _Html2Text(HTMLParser.HTMLParser):
                     nest_count = google_nest_count(tag_style)
                 else:
                     nest_count = len(self.list)
-                self.o(
-                    "  " * nest_count
-                )  # TODO: line up <ol><li>s > 9 correctly.
+                self.o("  " * nest_count)  # TODO: line up <ol><li>s > 9 correctly.
                 if li["name"] == "ul":
                     self.o(options.ul_item_mark + " ")
                 elif li["name"] == "ol":
@@ -792,9 +788,7 @@ class _Html2Text(HTMLParser.HTMLParser):
                     self.out(" ")
                 self.space = 0
 
-            if self.a and (
-                (self.p_p == 2 and LINKS_EACH_PARAGRAPH) or force == "end"
-            ):
+            if self.a and ((self.p_p == 2 and LINKS_EACH_PARAGRAPH) or force == "end"):
                 if force == "end":
                     self.out("\n")
 
@@ -814,9 +808,7 @@ class _Html2Text(HTMLParser.HTMLParser):
                         newa.append(link)
 
                 if self.a != newa:
-                    self.out(
-                        "\n"
-                    )  # Don't need an extra line when nothing was done.
+                    self.out("\n")  # Don't need an extra line when nothing was done.
 
                 self.a = newa
 

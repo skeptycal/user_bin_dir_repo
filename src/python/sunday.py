@@ -4,54 +4,82 @@
 # shellcheck disable=2230,2086
 
 # import autosys
-import datetime as dt
-from appdirs import AppDirs
+import datetime
+from datetime import datetime as dt
+from appdirs import AppDirs, appauthor, appname, prop
+from dataclasses import dataclass
+
 
 APPNAME = "IsSunday"
 APPAUTHOR = "Skeptycal"
 VERSION = "1.0.0"
 
 
-def which_day():
-    return dt.datetime.now().isoweekday()
+class NowAndThen:
 
+    def __init__(self) -> None:
+        pass
 
-def is_day(day: int):
-    return which_day() == day
+    # ? ****************************** dates and times
+    @ property
+    def now(self) -> dt:
+        return dt.now()
 
+    @ property
+    def date(self) -> datetime.date:
+        return self.now.date()
 
-def is_sunday() -> bool:
-    return is_day(7)
+    @ property
+    def time(self) -> datetime.time:
+        return self.now.time()
 
+    @ property
+    def timestamp(self) -> float:
+        return self.now.timestamp()
 
-def is_monday() -> bool:
-    return is_day(1)
+    # ? ****************************** datetime checks
 
+    @ property
+    def weekday(self) -> int:
+        return self.now.isoweekday()
 
-def do_sunday_tasks():
-    pass
+    @ property
+    def daynum(self) -> int:
+        return self.now.day
 
+    @ property
+    def is_weekday(self) -> bool:
+        return self.weekday < 6
 
-def do_monday_tasks():
-    print("Monday")
-    pass
+    @ property
+    def is_sunday(self) -> bool:
+        return self.weekday == 7
 
+    @ property
+    def is_monday(self) -> bool:
+        return self.weekday == 2
 
-def main():
-    """
-    CLI script main entry point.
-    """
+    # ? ****************************** tasks checks
 
-    print(which_day())
+    def do_sunday_tasks(self):
+        print("Sunday")
 
-    if is_sunday():
-        do_sunday_tasks()
-    elif is_monday():
-        do_monday_tasks()
+    def do_monday_tasks(self):
+        print("Monday")
 
 
 if __name__ == "__main__":  # if script is loaded directly from CLI
-    dirs = AppDirs(
-        APPNAME, APPAUTHOR, version=VERSION, roaming=True, multipath=True
-    )
-    main()
+
+    ap = AppDirs(appname=APPNAME, appauthor=APPAUTHOR,
+                 version=VERSION, roaming=True, multipath=True)
+
+    d = NowAndThen()
+
+    if d.is_sunday:
+        d.do_sunday_tasks()
+    elif d.is_monday:
+        d.do_monday_tasks()
+
+    print(d)
+    print(d.weekday)
+    print(d.daynum)

@@ -263,33 +263,37 @@ from typing import Dict, List, Union
 try:
     from asloguru import logger
 except:
-    print('logging not available')
+    print("logging not available")
 
 PathLike = Union[Path, str, None]
 
 HERE: PathLike = Path().cwd()
 
+
 class colors(enum.Enum):
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    BLACK = "\033[30m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    BLUE = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN = "\033[36m"
+    WHITE = "\033[37m"
+
+
 class styles:
-    BOLD = '\033[1m'
-    ITALIC = '\033[3m'
-    UNDERLINE = '\033[4m'
-    BRIGHT = '\033[5m'
-    INVERTED = '\033[7m'
-    RESET = '\033[0m'
+    BOLD = "\033[1m"
+    ITALIC = "\033[3m"
+    UNDERLINE = "\033[4m"
+    BRIGHT = "\033[5m"
+    INVERTED = "\033[7m"
+    RESET = "\033[0m"
+
 
 # this is the #*--> search_flag_for_testing <--*#
 # -------------------------------------
@@ -298,7 +302,10 @@ class styles:
 # *it is at position 20 in line 31
 # (lines start counting at 1, positions at 0)
 
-def grep_files(files:Union[List[PathLike], PathLike] = HERE, pattern = "*", args = argv[1:]):
+
+def grep_files(
+    files: Union[List[PathLike], PathLike] = HERE, pattern="*", args=argv[1:]
+):
     """
         Usage: greppy [-abcdDEFGHhIiJLlmnOopqRSsUVvwxZ] [-A num] [-B num] [-C[num]] [-e pattern] [-f file] [--binary-files=value] [--color[=when]] [--colour[=when]] [--context[=num]] [--label] [--line-buffered] [--null] [pattern] [file ...]
     """
@@ -309,18 +316,22 @@ def grep_files(files:Union[List[PathLike], PathLike] = HERE, pattern = "*", args
             continue
         for arg in args:
             try:
-                if arg in (data := file_path.open(mode='r').read()):
-                    for i, line in enumerate(data.split('\n')):
+                if arg in (data := file_path.open(mode="r").read()):
+                    for i, line in enumerate(data.split("\n")):
                         if arg in line:
                             char_no = line.index(arg)
                             line_no = i
-                            print(f"{colors.YELLOW}Found {colors.BLUE}{arg}{colors.YELLOW} at {colors.RED}{styles.BRIGHT}line {line_no:<5} pos {char_no:<4}{styles.RESET}{colors.YELLOW} in {colors.MAGENTA}{file_path.name}{colors.YELLOW}")
+                            print(
+                                f"{colors.YELLOW}Found {colors.BLUE}{arg}{colors.YELLOW} at {colors.RED}{styles.BRIGHT}line {line_no:<5} pos {char_no:<4}{styles.RESET}{colors.YELLOW} in {colors.MAGENTA}{file_path.name}{colors.YELLOW}"
+                            )
             except:
                 pass
+
 
 @logger.catch()
 def main(args=argv[1:]):
     print(grep_files())
+
 
 if __name__ == "__main__":
     main()

@@ -15,14 +15,14 @@ import re
 import package_metadata as meta
 from package_metadata import *
 from dataclasses import dataclass, field, Field
-from typing import Dict, List
+from typing import Any, Dict, List
 
-RE_TAGS_STRING: str = r'<@([^>]*)>'
+RE_TAGS_STRING: str = r"<@([^>]*)>"
 RE_TAGS_PATTERN: re.Pattern = re.compile(RE_TAGS_STRING)
 
-# dictionary of tagged replacements --> straight replacement
+# dictionary of tagged replacements --> straight replacements
 project_tags: Dict = {
-    'docs/config.yml': [
+    "docs/config.yml": [
         NAME,
         AUTHOR_EMAIL,
         DESCRIPTION,
@@ -31,56 +31,37 @@ project_tags: Dict = {
         github_username,
         default_jekyll_theme,
     ],
-    '.env': [
-        NAME,
-    ],
-    '.travis.yml': [
-        py_version,
-    ],
-    'AUTHORS': [
-        copyright_end,
-    ],
-    'CODE_OF_CONDUCT.md': [
-        AUTHOR_EMAIL,
-    ],
-    'CHANGELOG.md': [
-        NAME,
-    ],
-    'LICENSE': [
-        copyright_start,
-        copyright_end,
-        AUTHOR,
-    ],
-    'pyvenv.cfg': [
-        py_version,
-    ],
-    'tox.ini': [
-        py_versions_tested,
-    ],
-    'toxcov.ini': [
-        py_versions_tested,
-    ],
+    ".env": [NAME, ],
+    ".travis.yml": [py_version, ],
+    "AUTHORS": [copyright_end, ],
+    "CODE_OF_CONDUCT.md": [AUTHOR_EMAIL, ],
+    "CHANGELOG.md": [NAME, ],
+    "LICENSE": [copyright_start, copyright_end, AUTHOR, ],
+    "pyvenv.cfg": [py_version, ],
+    "tox.ini": [py_versions_tested, ],
+    "toxcov.ini": [py_versions_tested, ],
 }
 
 # dictionary of @replacements --> replace the line below with section
 #   bounded by matching tags in the package_metadata.py file
 at_tags: Dict = {
-    'setup.py': [           # file to put data into
-        'tags_metadata',    # first section
-        'package_metadata',  # second section
+    "setup.py": [  # file to put data into
+        "tags_metadata",  # first section
+        "package_metadata",  # second section
     ],
 }
 
 
 @dataclass
 class MetaData:
-    ''' Use the package metadata file to automate the initialization and
+    """ Use the package metadata file to automate the initialization and
         maintenance of a new project repo.
-        '''
-    file_name: str = 'package_metadata.py'
+        """
+
+    file_name: str = "package_metadata.py"
     pattern_toggle: bool = False
-    tags: Field = field(init=False)
-    data: Field = field(init=False)
+    tags: Dict[str, Any] = field(init=False)
+    data: Dict[str, Any] = field(init=False)
     pattern: re.Pattern = RE_TAGS_PATTERN
 
     def __post_init__(self):
@@ -89,7 +70,7 @@ class MetaData:
         pass
 
     def _get_file_data(self):
-        ''' Returns text file content as a list of lines. '''
+        """ Returns text file content as a list of lines. """
         return get_file_contents(self.file_name).splitlines()
 
     def index(self, value, start=0, stop=-1):
@@ -102,7 +83,7 @@ class MetaData:
         tmp: List[str] = []
         self.pattern_toggle = False
         # list(filter(self.r.match, self.data))
-        self.data.index(f'<@{pattern}')
+        self.data.index(f"<@{pattern}")
         for line in self.data:
             if pattern in line:
                 if self.pattern_toggle:
@@ -113,7 +94,7 @@ class MetaData:
                 tmp.append(line)
 
     def _get_tag_dict(self):
-        ''' Find and return lines of text from the package_metadata.py
+        """ Find and return lines of text from the package_metadata.py
             file. The lines are bounded by the tags listed and are placed
             in the files listed.
 
@@ -129,7 +110,7 @@ class MetaData:
             <@repl_tags>
             <@package_metadata>
             ```
-            '''
+            """
 
         return at_tags
 
@@ -140,7 +121,7 @@ class MetaData:
 
 # phone number for iPad or MacBook??? 361.827.0906
 
-RE_TAGS_STRING: str = r'<@([^>]*)>'
+RE_TAGS_STRING: str = r"<@([^>]*)>"
 r: re.Pattern = re.compile(RE_TAGS_STRING)
 
 print(r.match)

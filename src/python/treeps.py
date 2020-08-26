@@ -7,6 +7,10 @@ import re
 from collections import defaultdict
 from typing import DefaultDict, List
 
+if True:
+    LOGURU_LEVEL = 'TRACE'
+    from loguru import logger
+
 
 def ps(cmds: List[str] = ["axo", "ppid,pid,comm"]):
     """ #### Return result of shell `ps` command.
@@ -17,10 +21,8 @@ def ps(cmds: List[str] = ["axo", "ppid,pid,comm"]):
     # cmd = ['ps', 'axo', 'ppid,pid,comm'] # original
     cmd: List[str] = ["ps"]
     cmd.extend(cmds)
-    print(cmds)
-    print(cmd)
     proc: subp.Popen = subp.Popen(cmd, stdout=subp.PIPE)
-    proc.stdout.readline()
+    proc.stdout.readlines()
     for line in proc.stdout:
         yield line.rstrip().split(None, 2)
 
@@ -36,8 +38,7 @@ def hieraPrint(pidpool, pid, prefix=""):
     try:
         if pidpool[pppid]["children"][-1] == ppid:
             prefix = re.sub(
-                r"^(\s+\|.+)[\|`](\s+\|- )$", "\g<1> \g<2>", prefix
-            )
+                r"^(\s+\|.+)[\|`](\s+\|- )$", "\g<1> \g<2>", prefix)
     except IndexError:
         pass
     try:
@@ -54,19 +55,19 @@ def hieraPrint(pidpool, pid, prefix=""):
 
 
 if __name__ == "__main__":
-    ps_cmds: List[str] = []
+    args: List[str] = ["axo", "ppid,pid,comm"]
     if len(sys.argv) > 1:  # get cli args ...
-        ps_cmds = sys.argv[1:]
-    else:  # ... or use defaults
-        ps_cmds = ["axo", "ppid,pid,comm"]
-    print(f"{ps_cmds=}")
+        args = sys.argv[1:]
+
+    logger.trace(f"{args=}")
 
     pidpool: defaultdict = defaultdict(
         lambda: {"cmd": "", "children": [], "ppid": None}
     )
 
     # parse `ps` output and add values to dictionary
-    for ppid, pid, command in ps(ps_cmds):
+    print('# parse `ps` output and add values to dictionary')
+    for ppid, pid, command in ps(args):
         ppid = int(ppid)
         pid = int(pid)
         pidpool[pid]["cmd"] = command
