@@ -6,6 +6,8 @@
 
 # set -x
 
-. $(which ssm)
-TEMPLATE_DIR=~/Documents/coding/user_bin_dir_repo/src/repo_build/template.cfg
-git='git-achievements '
+# . $(which ssm)
+
+# TEMPLATE_DIR=~/Documents/coding/cc_template
+# TEMPLATE_CFG_FILE=$TEMPLATE_DIR/template.cfg
+# alias git='git-achievements '

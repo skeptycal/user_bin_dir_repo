@@ -36,7 +36,7 @@
     SCRIPT_PATH="${BASH_SOURCE%/*}"
     REPO_PATH="$PWD"
     REPO_NAME="${PWD##*/}"
-    TEMPLATE_PATH=$HOME/Documents/coding/template
+    TEMPLATE_PATH=~/Documents/coding/cc_template
 
     _debug_show_paths() {
         set -o shwordsplit
@@ -66,18 +66,8 @@
     }
 
     file_list() {
-        # list directory contents from path $1 with ansi color codes
-        # TODO - work in progress !!
-        [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
         SEARCH_PATH=${1:-$PWD}
-        cd $SEARCH_PATH
-        # ls -1A
-        list=$(ls -1A $SEARCH_PATH)
-        for f in $list; do
-            [[ -f $f ]] && echo -e "$f";
-            # [[ -d $f ]] && echo -e "$f";
-        done;
-        cd -
+		find $SEARCH_PATH -type f -print
     }
 #? ######################## main loop
     _setup_tools() {

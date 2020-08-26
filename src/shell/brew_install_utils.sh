@@ -1,15 +1,5 @@
 #!/usr/bin/env zsh
 
-# Ask for the administrator password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do
-	sudo -n true
-	sleep 60
-	kill -0 "$$" || exit
-done 2>/dev/null &
-
 # Install command-line tools using Homebrew.
 
 # a few cleanup and checkup runs ...
@@ -19,14 +9,28 @@ brew update
 brew upgrade
 brew cleanup
 
-# Store Homebrew’s installed location.
+# Store Homebrew's installed location.
 BREW_PREFIX=$(brew --prefix)
 
 # ------------------------------------ Install Favorite Utilities
 # Install GNU core utilities (those that come with macOS are outdated).
-# Don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
+# Don't forget to add `$(brew --prefix coreutils)/libexec/gnubin` to `$PATH`.
 brew install coreutils
-ln -s "${BREW_PREFIX}/bin/gsha256sum" "${BREW_PREFIX}/bin/sha256sum"
+
+# temp path fix
+PATH="$(brew --prefix coreutils)/libexec/gnubin:${PATH}"
+
+# add path to startup script
+case ${SHELL##*/} in
+		zsh) rcfile=~/.zshrc ;;
+		bash) rcfile=~/.bashprofile ;;
+		*) rcfile=~/.profile ;;
+esac
+
+echo PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH >> $rcfile
+
+# link for use now
+ln -s "${BREW_PREFIX}/bin/gsha256sum" "${BREW_PREFIX}/bin/sha256sum" >/dev/null 2>&1
 
 # Install some other useful utilities like `sponge`.
 brew install moreutils
@@ -37,14 +41,8 @@ brew install gnu-sed
 
 
 # Install latest Bash and Zsh
-# brew install bash bash-completion@2 bash-git-prompt
+brew install bash bash-completion@2 bash-git-prompt
 brew install zsh zsh-autosuggestions zsh-completions zsh-syntax-highlighting
-
-# Switch to using brew-installed zsh as default shell
-if ! fgrep -q "$(brew --prefix zsh)" /etc/shells; then
-  echo "$(brew --prefix zsh)" | sudo tee -a /etc/shells;
-  chsh -s "$(brew --prefix zsh)";
-fi;
 
 # Install `wget` with IRI support.
 brew install wget # --with-iri # outdated option
@@ -53,7 +51,7 @@ brew install wget # --with-iri # outdated option
 brew install gnupg
 
 # Install more recent versions of some macOS tools.
-# brew install vim --with-override-system-vi
+brew install vim #--with-override-system-vi
 brew install grep
 brew install openssh
 brew install screen
@@ -113,3 +111,12 @@ brew install zopfli
 # Remove outdated versions from the cellar.
 brew cleanup
 brew doctor
+
+# Switch to using brew-installed zsh as default shell
+if ! fgrep -q "$(brew --prefix zsh)" /etc/shells; then
+  echo "$(brew --prefix zsh)" | /usr/bin/sudo tee -a /etc/shells;
+  /usr/bin/sudo /usr/bin/chsh -s "$(brew --prefix zsh)";
+fi;
+
+# reload shell environment
+exec ${SHELL} -l

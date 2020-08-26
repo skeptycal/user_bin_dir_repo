@@ -1,72 +1,119 @@
 #!/usr/bin/env zsh
 # -*- coding: utf-8 -*-
-    # shellcheck shell=bash
-    # shellcheck source=/dev/null
-    # shellcheck disable=SC2034
-    set -a
+	# shellcheck shell=bash
+	# shellcheck source=/dev/null
+	# shellcheck disable=SC2034
 
+set -a # EXPORT ALL
 #? ######################## path constants
-    # Location of macOS Homebrew folder
-    declare -x BREW_PREFIX && BREW_PREFIX="$(brew --prefix)"
+	# Location of macOS Homebrew folder
+	export BREW_PREFIX="$(brew --prefix)"
 
-    # Locations of profile settings files
-    declare -x DOTFILES_PATH && DOTFILES_PATH="${HOME}/.dotfiles"
-    declare -x DOTFILES_INC && DOTFILES_INC="${DOTFILES_PATH}/zshrc_inc"
+	# Locations of profile settings files
+	export DOTFILES_PATH="${HOME}/.dotfiles"
+	export DOTFILES_INC="${DOTFILES_PATH}/zshrc_inc"
 
-    # declare -x TEMP_DIR && TEMP_DIR="$(mktemp -q -d -t "$(basename "$0").XXXXXX" 2>/dev/null || mktemp -q -d)"
-    # declare -x TEMP_FILE && TEMP_FILE="$TEMP_DIR/tmp_proc_random.$$.$RANDOM"
-    # declare -x SYS_USERID && SYS_USERID="$(id -un):$(id -gn)"
-    declare -x HERE && HERE="$PWD"
-    declare -x NL && NL='
+	# declare -x TEMP_DIR && TEMP_DIR="$(mktemp -q -d -t "$(basename "$0").XXXXXX" 2>/dev/null || mktemp -q -d)"
+	# declare -x TEMP_FILE && TEMP_FILE="$TEMP_DIR/tmp_proc_random.$$.$RANDOM"
+	# declare -x SYS_USERID && SYS_USERID="$(id -un):$(id -gn)"
+	# declare -x HERE && HERE="$PWD"
+	declare -x NL && NL='
 '
 
 #? ######################## setup ANSI constants for common colors
-    declare -x MAIN && MAIN=$(echo -en '\001\033[38;5;229m')
-    declare -x WARN && WARN=$(echo -en '\001\033[38;5;203m')
-    declare -x COOL && COOL=$(echo -en '\001\033[38;5;38m')
-    declare -x BLUE && BLUE=$(echo -en '\001\033[38;5;38m')
-    declare -x GO && GO=$(echo -en '\001\033[38;5;28m')
-    declare -x LIME && LIME=$(echo -en '\001\033[32;1m')
-    declare -x CHERRY && CHERRY=$(echo -en '\001\033[38;5;124m')
-    declare -x CANARY && CANARY=$(echo -en '\001\033[38;5;226m')
-    declare -x ATTN && ATTN=$(echo -en '\001\033[38;5;178m')
-    declare -x PURPLE && PURPLE=$(echo -en '\001\033[38;5;93m')
-    declare -x RAIN && RAIN=$(echo -en '\001\033[38;5;93m')
-    declare -x WHITE && WHITE=$(echo -en '\001\033[37m')
-    declare -x RESTORE && RESTORE=$(echo -en '\001\033[0m\002')
-    declare -x RESET && RESET=$(echo -en '\001\033[0m')
-    declare -x RESET_FG && RESET_FG="$RESET"
 
-#? ######################## program constants
-    # declare -x _pretty_usage="Usage :\n\t${MAIN}pretty${WHITE} [file(s) ...] \t\t- use list of files (default is all files in current directory)\n\t${MAIN}pretty${WHITE} [-m [commit message]] \t- use git staged files and commit with message
-    #     \n\t${MAIN}pretty${WHITE} [-h|--help|help] \t- usage help (this!)"
-    # # shellcheck disable=SC2016
-    # declare -x _debug_function_header_text='_header_test_log "Calling: ${CANARY:-}${FUNCNAME[0]} ${MAIN:-}$*${RESET:-}"'
+	# echo() {
+	# 	# more portable 'echo'
+	# 	# NEWLINE=
+	# 	case $1 in
+	# 		-e|-n|-en) shift;;
+	# 		# -n|-en) NEWLINE='\n'
+	# 	esac
+	# 	if [ -n "$1" ]; then
+	# 		printf '%s' "$1"
+	# 		shift
+	# 	fi
+	# 	for arg in "$@"; do
+	# 		printf ' %s' "$arg"
+	# 	done
+	# 	printf '%s\n' ''
+	# 	}
 
-
+	if [ -t 1 ]; then
+		MAIN="\001\033[38;5;229m"
+		WARN="\001\033[38;5;203m"
+		COOL="\001\033[38;5;38m"
+		BLUE="\001\033[38;5;38m"
+		GO="\001\033[38;5;28m"
+		LIME="\001\033[32;1m"
+		CHERRY="\001\033[38;5;124m"
+		CANARY="\001\033[38;5;226m"
+		ATTN="\001\033[38;5;178m"
+		PURPLE="\001\033[38;5;93m"
+		RAIN="\001\033[38;5;93m"
+		WHITE="\001\033[37m"
+		RESTORE="\001\033[0m\002"
+		RESET="\001\033[0m"
+	else
+		MAIN=
+		WARN=
+		COOL=
+		BLUE=
+		GO=
+		LIME=
+		CHERRY=
+		CANARY=
+		ATTN=
+		PURPLE=
+		RAIN=
+		WHITE=
+		RESTORE=
+		RESET=
+	fi
 
 
 #? ######################## setup functions for printing lines in common colors
-    br() { printf "\n" ; } # yes, this is a fake cli version of <br />
-    eprint() { printf "%b\n" "${*:-}" ; }
-    ce() { printf "%b\n" "${*:-}${RESET:-}" ; }
-    me() { ce "${MAIN:-}${*:-}" ; }
-    warn() { ce "${WARN:-}${*:-}" ; }
-    blue() { ce "${COOL:-}${*:-}" ; }
-    cool() { ce "${COOL:-}${*:-}" ; }
-    green() { ce "${GO:-}${*:-}" ; }
-    lime() { ce "${LIME:-}${*:-}" ; }
-    cherry() { ce "${CHERRY:-}${*:-}" ; }
-    canary() { ce "${CANARY:-}${*:-}" ; }
-    attn() { ce "${ATTN:-}${*:-}" ; }
-    purple() { ce "${PURPLE:-}${*:-}" ; }
-    rain() { ce "${RAIN:-}${*:-}" ; }
-    white() { ce "${WHITE:-}${*:-}" ; }
+	br() { printf "\n" ; } # yes, this is a fake cli version of <br />
+	eprint() { printf "%b\n" "${*:-}" ; }
+	ce() { printf "%b\n" "${*:-}${RESET:-}" ; }
+	me() { ce "${MAIN:-}${*:-}" ; }
+	warn() { ce "${WARN:-}${*:-}" ; }
+	blue() { ce "${COOL:-}${*:-}" ; }
+	cool() { ce "${COOL:-}${*:-}" ; }
+	green() { ce "${GO:-}${*:-}" ; }
+	lime() { ce "${LIME:-}${*:-}" ; }
+	cherry() { ce "${CHERRY:-}${*:-}" ; }
+	canary() { ce "${CANARY:-}${*:-}" ; }
+	attn() { ce "${ATTN:-}${*:-}" ; }
+	purple() { ce "${PURPLE:-}${*:-}" ; }
+	rain() { ce "${RAIN:-}${*:-}" ; }
+	white() { ce "${WHITE:-}${*:-}" ; }
 
 #? ######################## setup default package description and usage
+color_sample() {
+    ce "${MAIN:-}MAIN  ${WARN:-}WARN  ${COOL:-}COOL  ${LIME:-}LIME  ${GO:-}GO  ${CHERRY:-}CHERRY  ${CANARY:-}CANARY  ${ATTN:-}ATTN  ${RAIN:-}RAIN  ${WHITE:-}WHITE  ${RESET:-}RESET"
+	}
 
-declare -x color_sample && color_sample="$(
-    cat <<color_sample
-    ${MAIN:-}MAIN  ${WARN:-}WARN  ${COOL:-}COOL  ${LIME:-}LIME  ${GO:-}GO  ${CHERRY:-}CHERRY  ${CANARY:-}CANARY  ${ATTN:-}ATTN  ${RAIN:-}RAIN  ${RESET:-}RESET
-color_sample
-)"
+# archived ...
+
+	# declare -x MAIN && MAIN=$(echo -en '\001\033[38;5;229m')
+	# declare -x WARN && WARN=$(echo -en '\001\033[38;5;203m')
+	# declare -x COOL && COOL=$(echo -en '\001\033[38;5;38m')
+	# declare -x BLUE && BLUE=$(echo -en '\001\033[38;5;38m')
+	# declare -x GO && GO=$(echo -en '\001\033[38;5;28m')
+	# declare -x LIME && LIME=$(echo -en '\001\033[32;1m')
+	# declare -x CHERRY && CHERRY=$(echo -en '\001\033[38;5;124m')
+	# declare -x CANARY && CANARY=$(echo -en '\001\033[38;5;226m')
+	# declare -x ATTN && ATTN=$(echo -en '\001\033[38;5;178m')
+	# declare -x PURPLE && PURPLE=$(echo -en '\001\033[38;5;93m')
+	# declare -x RAIN && RAIN=$(echo -en '\001\033[38;5;93m')
+	# declare -x WHITE && WHITE=$(echo -en '\001\033[37m')
+	# declare -x RESTORE && RESTORE=$(echo -en '\001\033[0m\002')
+	# declare -x RESET && RESET=$(echo -en '\001\033[0m')
+	# declare -x RESET_FG && RESET_FG="$RESET"
+
+#? ######################## program constants
+	# declare -x _pretty_usage="Usage :\n\t${MAIN}pretty${WHITE} [file(s) ...] \t\t- use list of files (default is all files in current directory)\n\t${MAIN}pretty${WHITE} [-m [commit message]] \t- use git staged files and commit with message
+	#     \n\t${MAIN}pretty${WHITE} [-h|--help|help] \t- usage help (this!)"
+	# # shellcheck disable=SC2016
+	# declare -x _debug_function_header_text='_header_test_log "Calling: ${CANARY:-}${FUNCNAME[0]} ${MAIN:-}$*${RESET:-}"'

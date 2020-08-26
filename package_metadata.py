@@ -17,17 +17,17 @@ from typing import Dict, List, Tuple
 
 from setup import get_file_contents, pip_safe_name
 
-module_name: str = 'template_test'
-__version__: str = '0.0.1'
+module_name: str = "template_test"
+__version__: str = "0.0.1"
 
 # *<@repl_tags>************************** replacement tags info
-twitter_username: str = 'skeptycal'
-github_username: str = 'skeptycal'
-default_jekyll_theme: str = 'minima'
-py_version: str = '3.8'
-py_versions_tested: str = '6,7,8,9'
-copyright_start: int = '2018'
-copyright_end: int = '2020'
+twitter_username: str = "skeptycal"
+github_username: str = "skeptycal"
+default_jekyll_theme: str = "minima"
+py_version: str = "3.8"
+py_versions_tested: str = "6,7,8,9"
+copyright_start: int = 2018
+copyright_end: int = 2020
 # *<@repl_tags>************************** replacement tags info
 
 # *<@package_metadata>******************* setuptools info
@@ -36,11 +36,11 @@ copyright_end: int = '2020'
 NAME: str = pip_safe_name(module_name)
 
 VERSION: str = __version__
-VERSION_INFO: Tuple[int] = VERSION.split(".")
+VERSION_INFO: Tuple[int] = tuple(__version__.split('.'))
 DESCRIPTION: str = "System utilities for Python on macOS."
 REQUIRES_PYTHON: str = ">=3.8.0"
-PACKAGE_DIR: Dict = {'': f'{NAME}'}
-PACKAGE_EXCLUDE: List[str] = ['*test*', '*bak*']
+PACKAGE_DIR: Dict = {"": f"{NAME}"}
+PACKAGE_EXCLUDE: List[str] = ["*test*", "*bak*"]
 LICENSE: str = "MIT"
 LONG_DESCRIPTION: str = get_file_contents()
 LONG_DESCRIPTION_CONTENT_TYPE: str = "text/markdown"
@@ -75,7 +75,7 @@ EXTRAS: Dict = {
         "Sphinx>=2.2.1",
         "sphinx-autobuild>=0.7.1",
         "sphinx-rtd-theme>=0.4.3",
-    ]
+    ],
 }
 
 PACKAGE_DATA: Dict = {
@@ -96,8 +96,7 @@ PROJECT_URLS: Dict = {
     "Website": f"https://skeptycal.github.io/{NAME}/",
     "Documentation": f"https://skeptycal.github.io/{NAME}/docs",
     "Source Code": f"https://www.github.com/skeptycal/{NAME}/",
-    "Changelog":
-    f"https://github.com/skeptycal/{NAME}/blob/master/CHANGELOG.md",
+    "Changelog": f"https://github.com/skeptycal/{NAME}/blob/master/CHANGELOG.md",
 }
 
 KEYWORDS: List = [

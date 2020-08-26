@@ -27,13 +27,14 @@ try:
     DEFAULT_ENCODING  # noqa
 except NameError:
     from locale import getpreferredencoding
+
     DEFAULT_ENCODING: str = getpreferredencoding(do_setlocale=True) or "utf-8"
 
 # put a name here to ignore the default ...
 module_name: str = "home_bin"
 
 # the default version number is '0.0.1'
-__version__: str = '0.0.1'
+__version__: str = "0.0.1"
 
 # the default package name is the name of the parent folder ...
 if not module_name:
@@ -46,11 +47,10 @@ if here not in PYTHONPATH:
 
 
 def table_print(data: (Dict, Sequence), **kwargs):
-    ''' ### Prints a pretty 'table' version of a dict or sequence. '''
+    """ ### Prints a pretty 'table' version of a dict or sequence. """
     tmp: List = []
     if isinstance(data, dict):
-        tmp.extend(
-            [f"{str(k):<15.15} :  {repr(v):<45.45}" for k, v in data.items()])
+        tmp.extend([f"{str(k):<15.15} :  {repr(v):<45.45}" for k, v in data.items()])
     elif isinstance(data, (list, tuple, set)):
         for x in data:
             try:
@@ -58,7 +58,7 @@ def table_print(data: (Dict, Sequence), **kwargs):
             except (TypeError, NameError, KeyError, ValueError):
                 tmp.append(f"{str(x)}")
     else:
-        raise TypeError('Parameter must be an iterable Mapping or Sequence.')
+        raise TypeError("Parameter must be an iterable Mapping or Sequence.")
     print(NL.join(tmp), **kwargs)
 
 
@@ -71,8 +71,7 @@ def pip_safe_name(s: str):
     return s.lower().replace("-", "_").replace(" ", "_")
 
 
-def get_file_contents(file_name: str = "readme.md",
-                      search_list: List[str] = None):
+def get_file_contents(file_name: str = "readme.md", search_list: List[str] = None):
     """ ### Returns the text of the README file
 
 
@@ -108,8 +107,7 @@ def get_file_contents(file_name: str = "readme.md",
             with open(find_path, mode="r", encoding=DEFAULT_ENCODING) as f:
                 return f.read()
         except IOError as e:
-            raise IOError(
-                f"Cannot read from the project file '{find_path}'{NL}{e}")
+            raise IOError(f"Cannot read from the project file '{find_path}'{NL}{e}")
     else:
         raise FileNotFoundError(
             f"Cannot find project file '{file_name}' in project tree. Search list = {search_list}"
@@ -127,9 +125,9 @@ VERSION_INFO: Tuple[int] = VERSION.split(".")
 DESCRIPTION: str = "System utilities for Python on macOS."
 REQUIRES_PYTHON: str = ">=3.8.0"
 # PACKAGE_DIR: Dict = {f'{NAME}'}
-PACKAGE_EXCLUDE: List[str] = ['*test*', '*bak*']
+PACKAGE_EXCLUDE: List[str] = ["*test*", "*bak*"]
 LICENSE: str = "MIT"
-LONG_DESCRIPTION: str = get_file_contents('README.md')
+LONG_DESCRIPTION: str = get_file_contents("README.md")
 LONG_DESCRIPTION_CONTENT_TYPE: str = "text/markdown"
 # LONG_DESCRIPTION_CONTENT_TYPE="text/x-rst",
 AUTHOR: str = "Michael Treanor"
@@ -168,8 +166,7 @@ PROJECT_URLS: Dict = {
     "Website": f"https://skeptycal.github.io/{NAME}/",
     "Documentation": f"https://skeptycal.github.io/{NAME}/docs",
     "Source Code": f"https://www.github.com/skeptycal/{NAME}/",
-    "Changelog":
-    f"https://github.com/skeptycal/{NAME}/blob/master/CHANGELOG.md",
+    "Changelog": f"https://github.com/skeptycal/{NAME}/blob/master/CHANGELOG.md",
 }
 
 KEYWORDS: List = [
@@ -222,8 +219,7 @@ def main():
         description=DESCRIPTION,
         python_requires=REQUIRES_PYTHON,
         # package_dir=PACKAGE_DIR,
-        packages=find_packages(
-            f'{NAME}', exclude=PACKAGE_EXCLUDE),
+        packages=find_packages(f"{NAME}", exclude=PACKAGE_EXCLUDE),
         # py_modules=[f"{NAME}"],
         license=LICENSE,
         long_description=LONG_DESCRIPTION,

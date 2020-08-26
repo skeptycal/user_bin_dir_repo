@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-''' conftest.py - pytest configuration test
+""" conftest.py - pytest configuration test
 
     (keep one in the root directory to aid in module loading for pytest.)
 
@@ -10,4 +10,4 @@
     this case the repo directory)."
 
     Reference: https://stackoverflow.com/a/50610630
-    '''
+    """
