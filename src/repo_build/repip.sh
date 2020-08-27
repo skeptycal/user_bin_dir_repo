@@ -19,7 +19,7 @@ alias pip='pip --use-feature=2020-resolver '
 alias piu='pip install -U --use-feature=2020-resolver '
 
 lime "Updating pip ... " >&6
-piu pip || ( get-pip; piu pip; )
+pip install -U pip || ( get-pip; piu pip; )
 
 lime "Installing basic pip tools ... " >&6
 piu wheel setuptools twine pytest pylint pre-commit
