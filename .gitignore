@@ -143,20 +143,19 @@ Downloads
 **/.wakatime*
 .tool-versions
 .coveralls.yml
-*history*
 **/*history*
 **/*hist
 **/.nvram.xml
 
 # Python repo files
-.coveragerc
-.pre-commit-config.yaml
-.pylintrc
-.travis.yml
-pyproject.toml
-pytest.ini
-tox.ini
-toxcov.ini
+# .coveragerc
+# .pre-commit-config.yaml
+# .pylintrc
+# .travis.yml
+# pyproject.toml
+# pytest.ini
+# tox.ini
+# toxcov.ini
 
 # Python dev files
 .viminfo
@@ -181,12 +180,9 @@ env/
 # general ignore files
 **/temp/
 *private*
-*bak*
-**/bak/
+**/*bak/
 .oh-my-zsh/
-coding/
 
-*private*
 *token
 .lesshst
 .pypirc
@@ -997,7 +993,6 @@ $tf/
 /app/Config/database.php
 /app/tmp/*
 /auto/
-/bin/
 /blib/
 /bower_components
 /build/
@@ -1130,7 +1125,6 @@ Backup of *.doc*
 Backup*/
 BenchmarkDotNet.Artifacts/
 bh_unicode_properties.cache
-bin/
 Binaries/*
 bld/
 bootstrap/compiled.php
