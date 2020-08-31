@@ -81,12 +81,11 @@
 
         # setup tools
         git init
-        python3 -m venv venv
-        source ./venv/bin/activate
+        python3 -m venv .venv
+        source ./.venv/bin/activate
 
         # update pip
         pip install -U pip
-        pip install wheel setuptools
         pip install -U wheel setuptools
     } >/dev/null 2>&1
 
