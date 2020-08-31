@@ -11,15 +11,14 @@ TEMPLATE_DIR=~/Documents/coding/cc_template
 trap "exec 1>&6 6>&-" EXIT
 exec 6>&1 1>/dev/null
 
+lime "Updating pip ... " >&6
+pip install -U pip || ( get-pip; pip install -U pip; )
+
 # As of pip 20.2.2
 # 	this is a new option to resolve dependencies
 # 	--use-feature=2020-resolver
 alias pip='pip --use-feature=2020-resolver '
-
 alias piu='pip install -U --use-feature=2020-resolver '
-
-lime "Updating pip ... " >&6
-pip install -U pip || ( get-pip; piu pip; )
 
 lime "Installing basic pip tools ... " >&6
 piu wheel setuptools twine pytest pylint pre-commit
