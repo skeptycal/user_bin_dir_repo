@@ -1,4 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env zsh
+# -*- coding: utf-8 -*-
+  # shellcheck shell=bash
+  # shellcheck source=/dev/null
+  # shellcheck disable=2178,2155
+
+# use aliases from .zshrc also
+setopt aliases
+
 ## commands (alias)
 ## - function command cli adapter
 ## version 0.0.6 - enable alias expansion for standalone use
@@ -14,7 +22,7 @@ list-available-commands() { { local function_name ; function_name="${1}" ; local
    | sed  "1d" \
    | grep -e "${filter_include}"
 }
-shopt -s expand_aliases
+
 alias read-command-args='
  list-available-commands ${FUNCNAME}
  echo "enter new command (or q to quit)"
