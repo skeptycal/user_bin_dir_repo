@@ -6,7 +6,7 @@
 
 # use aliases from .zshrc
 setopt aliases
-
+[[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
 . $(which ssm)
 
 TEMPLATE_DIR=~/Documents/coding/cc_template

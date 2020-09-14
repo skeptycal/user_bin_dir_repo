@@ -6,32 +6,18 @@
 
 #* ###################### Setup for after 'git clone xxx'
 
+#? ####################### 'standard script modules' if available else just colors
+. $(which ssm) || . $(which shell_colors.sh)
+
 #? ####################### debug
     # SET_DEBUG: set to 1 for verbose testing;
     SET_DEBUG=1
 
 #? ######################## configuration
 	[[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
+
     export YEAR=$(date +%Y)
     t0=$(date +%s.%n)
-    _set_basic_colors() {
-        export MAIN="\001\033[38;5;229m"
-        export WARN="\001\033[38;5;203m"
-        export COOL="\001\033[38;5;38m"
-        export BLUE="\001\033[38;5;38m"
-        export GO="\001\033[38;5;28m"
-        export LIME="\001\033[32;1m"
-        export CHERRY="\001\033[38;5;124m"
-        export CANARY="\001\033[38;5;226m"
-        export ATTN="\001\033[38;5;178m"
-        export PURPLE="\001\033[38;5;93m"
-        export RAIN="\001\033[38;5;93m"
-        export WHITE="\001\033[37m"
-        export RESTORE="\001\033[0m\002"
-        export RESET="\001\033[0m"
-    	}
-    # ssm - standard script modules or alternate
-    . $(which ssm) || _set_basic_colors
     cleanup() {
         # cleanup and exit script
         unset echo
@@ -53,16 +39,6 @@
     REPO_PATH="$PWD"
     REPO_NAME="${PWD##*/}"
 #? ######################## utilities
-    # echo () {
-    #     if [ -n "$1" ]; then
-    #         printf '%s' "$1"
-    #         shift
-    #     fi
-    #     for arg in "$@"; do
-    #         printf ' %s' "$arg"
-    #     done
-    #     printf '%s\n' ''
-    # 	}
 	dbecho() { (( SET_DEBUG==1 )) && echo "${ATTN:-}$@"; }
     _debug_show_paths() {
         tmp='BASH_SOURCE SCRIPT_NAME SCRIPT_PATH REPO_PATH REPO_NAME TEMPLATE_PATH'
@@ -121,7 +97,7 @@
 
     main() {
 		(( SET_DEBUG==1 )) && _debug_show_paths
-		TESTPATH=$(realpath $PWD)
+
 		while (( $# > 0 )); do
 			case $1 in
 				-h|--help)

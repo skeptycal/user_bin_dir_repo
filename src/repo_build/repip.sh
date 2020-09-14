@@ -26,8 +26,10 @@ piu wheel setuptools twine pytest pylint pre-commit
 lime "Installing pip dev tools ... " >&6
 piu toml autosysloguru cookiecutter coverage autopep8 dataclasses docutils Pygments pygments-pre-commit pytest-cookies pytest-cov Sphinx sphinx-rtd-theme tox requests
 
-lime "Updating all pythong packages ... " >&6
-piu $(pip list | sed 's/  */ /g' | cut -d ' ' -f 1 | tail -n +3; )
+lime "Updating all python3 packages ... " >&6
+# piu $(pip list | sed 's/  */ /g' | cut -d ' ' -f 1 | tail -n +3; )
+piu $(pip list | sed 's/  */ /g' | awk {'print $1'} | tail -n +3; )
+
 
 # as of 8/23/2020
 pip_package_versions=<<-PIPVERSIONS
