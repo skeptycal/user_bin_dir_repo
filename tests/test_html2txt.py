@@ -4,11 +4,12 @@ from string import whitespace
 from pathlib import Path
 from sys import path as PYTHON_PATH
 
-
-PYTHON_PATH.insert(-1, Path(__file__).resolve().parents[0].as_posix())
-PYTHON_PATH.insert(-1, Path(__file__).resolve().parents[1].as_posix())
+for p in Path(__file__).resolve().parents:
+    PYTHON_PATH.insert(-1, p.as_posix())
 
 PYTHON_PATH = list(set(PYTHON_PATH))
+
+print(PYTHON_PATH)
 
 
 # import html2txt
@@ -17,7 +18,8 @@ PYTHON_PATH = list(set(PYTHON_PATH))
 
 class TestOnlyWhite:
     def test_only_white_vs_isspace(self):
-        lines = [" df sdwlkjlkd9788723", "    ", "\n", " sdfkkj     ", "\t\t   "]
+        lines = [" df sdwlkjlkd9788723", "    ",
+                 "\n", " sdfkkj     ", "\t\t   "]
 
         for c in lines:
             # for c in line:
