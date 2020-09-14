@@ -18,7 +18,7 @@ BREW_PREFIX=$(brew --prefix)
 brew install coreutils
 
 # temp path fix
-PATH="$(brew --prefix coreutils)/libexec/gnubin:${PATH}"
+PATH="${BREW_PREFIX}/coreutils/libexec/gnubin:${PATH}"
 
 # add path to startup script
 case ${SHELL##*/} in
@@ -27,7 +27,7 @@ case ${SHELL##*/} in
 		*) rcfile=~/.profile ;;
 esac
 
-echo PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH >> $rcfile
+echo PATH="${BREW_PREFIX}/coreutils/libexec/gnubin:${PATH}" >> $rcfile
 
 # link for use now
 ln -s "${BREW_PREFIX}/bin/gsha256sum" "${BREW_PREFIX}/bin/sha256sum" >/dev/null 2>&1

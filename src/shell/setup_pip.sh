@@ -24,14 +24,18 @@
     #* @link      https://www.github.com/skeptycal
     #*
 #* ############################################################################
-. $(which ssm)
+
+
 #! DRAFT - this is a work in progress
 # exit 0
 #? ####################### debug
     # SET_DEBUG: set to 1 for verbose testing;
     SET_DEBUG=1
 #? ####################### initialization
-    BASH_SOURCE="${0}"
+	. $(which ssm)
+	[[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
+
+	BASH_SOURCE="${BASH_SOURCE:-"$0"}"
     SCRIPT_NAME="${BASH_SOURCE##*/}"
     SCRIPT_PATH="${BASH_SOURCE%/*}"
     REPO_PATH="$PWD"
@@ -39,7 +43,6 @@
     TEMPLATE_PATH=~/Documents/coding/cc_template
 
     _debug_show_paths() {
-        set -o shwordsplit
         tmp='BASH_SOURCE SCRIPT_NAME SCRIPT_PATH REPO_PATH REPO_NAME TEMPLATE_PATH'
         for i in $tmp; do
             echo -e "${MAIN:-}${(r:15:)i} ... ${CANARY:-}${(P)i}${RESET:-}"
@@ -124,4 +127,4 @@
     }
 
 #! ######################## entry point
-_main_loop "$@"
+# _main_loop "$@"
