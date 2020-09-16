@@ -1,33 +1,31 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
+from os import PathLike, walk
 
 
-class QUOTING_STYLE_FORMATS:
-    '-N': t.Literal[str] = 'print entry names without quoting'
-    '--literal': t.Literal[str] = 'print entry names without quoting'
-    '-b': t.Literal[str] = 'print C-style escapes for nongraphic characters'
-    '--escape': t.Literal[str] = 'print C-style escapes for nongraphic characters'
-    '-q': t.Literal[str] = 'print ? instead of nongraphic characters'
-    '--hide-control-chars': t.Literal[str] = 'print ? instead of nongraphic characters'
-    '--show-control-chars': t.Literal[str] = 'show nongraphic characters as-is (the default, unless program is "ls" and output is a terminal)'
-    '-Q': t.Literal[str] = 'enclose entry names in double quotes'
-    '--quote-name': t.Literal[str] = 'enclose entry names in double quotes'
-    '--quoting-style = WORD': t.Literal[str] = 'use quoting style WORD for entry names: literal, locale, shell, shell-always, shell-escape, shell-escape-always, c, escape (overrides QUOTING_STYLE environment variable)'
-
-
-QU
+class QuotingStyleFormats:
+    '-N' = 'print entry names without quoting'
+    '--literal' = 'print entry names without quoting'
+    '-b' = 'print C-style escapes for nongraphic characters'
+    '--escape' = 'print C-style escapes for nongraphic characters'
+    '-q' = 'print ? instead of nongraphic characters'
+    '--hide-control-chars' = 'print ? instead of nongraphic characters'
+    '--show-control-chars' = 'show nongraphic characters as-is (the default, unless program is "ls" and output is a terminal)'
+    '-Q' = 'enclose entry names in double quotes'
+    '--quote-name' = 'enclose entry names in double quotes'
+    '--quoting-style = WORD' = 'use quoting style WORD for entry names: literal, locale, shell, shell-always, shell-escape, shell-escape-always, c, escape (overrides QUOTING_STYLE environment variable)'
 
 
 @dataclass
 class LS:
-    path_name: PathLike = '.'
+    path_name: PathLike = ''
     formatstr: str = ''
     sort: str = 'a'
-    options = 'laF
+    options = 'laFg'
     links: str = ''  # HLD
     escape: bool = False
-    QUOTING_STYLE: QUOTING_STYLE_FORMATS = QUOTING_STYLE_FORMATS.N
+    QUOTING_STYLE: QuotingStyleFormats = QuotingStyleFormats.N
 
     """
         Usage: gls [OPTION]... [FILE]...
@@ -196,7 +194,7 @@ class LS:
             -U                          do not sort; list entries in directory order
             -X                          sort alphabetically by entry extension
             """
-    for root, dirs, files in os.walk(path_name):
+    for root, dirs, files in walk(path_name):
         for f in files:
             print(f)
 

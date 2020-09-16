@@ -57,9 +57,15 @@ class NowAndThen:
 
     @ property
     def is_monday(self) -> bool:
-        return self.weekday == 2
+        return self.weekday == 1
 
     # ? ****************************** tasks checks
+
+    def check(self):
+        if self.is_sunday:
+            self.do_sunday_tasks()
+        elif self.is_monday:
+            self.do_monday_tasks()
 
     def do_sunday_tasks(self):
         print("Sunday")
@@ -75,11 +81,9 @@ if __name__ == "__main__":  # if script is loaded directly from CLI
 
     d = NowAndThen()
 
-    if d.is_sunday:
-        d.do_sunday_tasks()
-    elif d.is_monday:
-        d.do_monday_tasks()
+    d.check()
 
     print(d)
     print(d.weekday)
     print(d.daynum)
+    print(d.timestamp)

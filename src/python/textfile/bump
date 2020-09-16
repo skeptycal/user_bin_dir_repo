@@ -1,29 +1,62 @@
 #!/usr/bin/env python3
 
-import os
-import subprocess
-import sys
+from ._util import *
+from .shell import shell, repl, ls, check
 
-from subprocess import CalledProcessError, CompletedProcess, PIPE, run, Popen
+bc = BasicColors()
 
-from typing import Any, List, Pattern, Union, IO
-from typing_extensions import Overload
-from os import PathLike as _PathLike
+RE_SEMVER = r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
-try:
-    import regex as re
-except ImportError:
-    import re
+semver: Pattern = re.compile(RE_SEMVER)
 
 
-DEFAULT_TIMEOUT: float = 15.0
+SET_DEBUG: int = 2
 
 
-def shell(args=[], timeout: float = DEFAULT_TIMEOUT, check: bool = False) -> Union[CompletedProcess, CalledProcessError]:
-    """
+def main(args=argv):
+
+    poetry_check = shell('poetry check')
+    print(poetry_check)
+    print(check('poetry check'))
+
+    # get_os_result=os.
+    # VERSION = shell("poetry version | cut -d ' ' -f 2")
+    # print(VERSION)
+    while True:
+        s = str(input())
+        repl(args=s, debug=SET_DEBUG)
 
 
-        use subprocess.run to access command line results.
+def shell(args: Union[AnyStr, List[AnyStr]],
+          input: AnyStr = None,
+          capture_output: bool = True,
+          timeout: float = DEFAULT_TIMEOUT,
+          check: bool = True,
+          ignore_errors: bool = True,
+          encoding: str = DEFAULT_ENCODING,
+          env: Dict = {},
+          **kwargs) -> CompletedProcess:
+    """ #### Run a shell command using and return a CompletedProcess Instance
+
+        Params:
+        - args - shell command and arguments
+        - input - optional `stdin` str or bytes
+        - timeout - optional time limit to wait for response
+        - check - check returncode for non-zero and raise an exception
+        - ignore_errors - ignore errors and return whatever is available
+        - verbose - catch and return output details
+        - env - environment mapping
+
+        Return:
+        - args, stdout, stderr
+        - returncode - shell command return code (0 is success)
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+        Reference: Docs for subprocess.run (python 3.8.5)
+
+        Use subprocess.run to access command line results.
 
         Run command with arguments and return a CompletedProcess instance.
 
@@ -54,51 +87,83 @@ def shell(args=[], timeout: float = DEFAULT_TIMEOUT, check: bool = False) -> Uni
 
         The other arguments are the same as for the Popen constructor.
         """
+
+    if not args:
+        raise ShellCommandError()
+    # join sequences into strings and bytes
+    if isinstance(args, (tuple, set, list)):
+        if isinstance(args[0], str):
+            args = tuple(' '.join(args).split())
+            # args = args.encode(encoding) if not WIN32 else args
+        if isinstance(args[0], bytes):
+            args = tuple(b' '.join(args).split())
+    elif not isinstance(args, (str, bytes)):
+        raise TypeError(f'Arguments must be str or bytes, not {type(args)}')
+
+    args = args.split()
+
+    # stdout = PIPE if verbose else None
+    # stderr = PIPE if verbose else None  # or STDOUT
+
+    # timeout guard
+    if timeout and not isinstance(timeout, float):
+        try:
+            timeout = float(timeout)
+        except (NameError, OverflowError, TypeError, ValueError, ZeroDivisionError) as e:
+            # if the problem was an invalid format or type for the timeout, use
+            # the default timeout value
+            if ignore_errors:
+                timeout = DEFAULT_TIMEOUT
+            raise
+        except Exception as e:
+            # all other errors return an error
+            if ignore_errors:
+                return e
+            raise
+
     try:
-        return run(args=args, stdout=PIPE, stderr=PIPE, timeout=timeout, check=check)
+        # The returned CompletedProcess instance will have:
+        # args, returncode, stdout, and stderr.
+        # "input" is optionally used to pass bytes or string to stdin,
+        # but is mutually exclusive with Popen's "stdin"
+        return run(args=args, capture_output=capture_output,  input=input, encoding=encoding, timeout=timeout, check=check)
     except CalledProcessError as e:
-        if not check:
-            return e
+        # An actual error returned from the invoked command 'args'
+        # The CalledProcessError instance will have:
+        # returncode attribute, and output & stderr if captured.
+        if ignore_errors:
+            return e  # TODO - log and improve error message
+        raise
+    except TimeoutError as e:
+        # Frozen? Or a long running command was not given enough time to
+        # complete. If timeout is given, and the process takes too long,
+        # a TimeoutExpired exception will be raised.
+        if ignore_errors:
+            return e  # TODO - log and improve error message
+        raise
+    except (FileNotFoundError, IOError, OSError) as e:
+        # An actual OSError is caught. We cannot be sure what
+        # information is available.
+        if ignore_errors:
+            return e  # TODO - log and improve error message
+        raise
+    except (TypeError, ValueError) as e:
+        # parameters incorrect type?
+        if ignore_errors:
+            return e  # TODO - log and improve error message
+        raise
+    except Exception as e:
+        # something very strange happened!
+        if ignore_errors:
+            return e  # TODO - log and improve error message
         raise
 
 
-def get_ls(
-    filenames: str = ".", params: str = "-lAgG", ignore_errors: bool = False
-) -> str:
-    cmd_list: List[str] = ["ls"]
-    if not filenames:
-        filenames = "."
-    cmd_list.extend(filenames.split(" "))
-    cmd_list.extend(params.split(" "))
-    out: Popen = shell(cmd_list)
-    stdout, stderr = out.communicate()
-    if stderr and not ignore_errors:
-        raise OSError(stderr)
-    return stdout.decode()
+# ls()
 
+if __name__ == "__main__":
+    main()
 
-class File:
-    mode: str
-
-
-def ls(filenames: str = ".", params: str = "-lAgG", ignore_errors: bool = False):
-    data = get_ls(filenames=filenames, params=params,
-                  ignore_errors=ignore_errors)
-
-    for line in data:
-        if line[0] == "d":
-            pass
-    print(data)
-
-
-ls()
-
-# get_os_result=os.
-VERSION = shell("poetry version | cut -d ' ' -f 2")
-
-RE_SEMVER = r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
-
-semver: Pattern = re.compile(RE_SEMVER)
 
 # echo $VERSION
 
