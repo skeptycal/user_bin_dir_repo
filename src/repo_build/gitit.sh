@@ -8,6 +8,7 @@
 setopt aliases
 [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
 . $(which ssm)
+. "$HOME/.dotfiles/.oh-my-zsh/lib/git.zsh"
 
 TEMPLATE_DIR=$HOME/local_coding/cc_template
 
