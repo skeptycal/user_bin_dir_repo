@@ -53,7 +53,7 @@ gitit() {
             pre-commit >&6
 
             git commit -m "$message" # --gpg-sign=$(which gpg_private)
-            git push --set-upstream origin "$repo" >&6
+            git push --set-upstream origin $(git_current_branch) >&6
 
             git status >&6
         fi
