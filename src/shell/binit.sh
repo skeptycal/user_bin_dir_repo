@@ -14,11 +14,9 @@ SCRIPT_PATH="${BASH_SOURCE%/*}"
 VERSION='1.1.2'
 
 # list of cli arguments passed, including FILES to link
-ARGS=( ${@:1} )
+ARGS=${@:1}
 
-echo() {
-    printf '%s\n' $@
-}
+# echo() { printf '%b\n' $@; }
 
 # if no files are given, echo usage information and exit
 if [ -z "$ARGS" ]; then
@@ -32,14 +30,10 @@ link_scripts() {
     # prefer hard links; backups performed for files that are overwritten
     # remove extensions for sh and py files ... personal preference
 
-    if [ "$1" ]; then
-        TMP_ARGS=( ${@:1} )
-    else
-        TMP_ARGS=$ARGS
-    fi
-
-    for arg in $TMP_ARGS; do
-        src=$(realpath $arg)
+    while [[ $# > 0 ]]; do
+        src=$(realpath $1)
+        echo $src
+        shift
         if [ -r $src ]; then
             chmod a+x $src
 
@@ -59,7 +53,7 @@ link_scripts() {
 
 
         else
-            exit "${arg} (${src}) is not readable."
+            exit "${1} (${src}) is not readable."
         fi
     done
 }
@@ -70,11 +64,11 @@ if ! type binit &> /dev/null; then
     echo "Setting up binit for the first time."
     BINIT_FILE=$(find . -type f -name binit.sh -print | tail -n 1)
     if [ -z $BINIT_FILE ]; then # may be long running! Hope we never see this...
-        BINIT_FILE=$(find ~ -type f -name binit.sh -print | tail -n 1)
+        BINIT_FILE=$(find "$HOME" -type f -name binit.sh -print | tail -n 1)
     fi
     link_scripts $(realpath $BINIT_FILE)
 fi
 
-link_scripts $@
+link_scripts "$@"
 
 # $SHELL -l
