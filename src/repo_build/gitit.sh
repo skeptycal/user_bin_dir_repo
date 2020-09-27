@@ -20,9 +20,13 @@ gs() { git status >/dev/null 2>&1; }
 gsok() { git status | grep 'nothing to commit'; }
 gstdir() { [[ -n $1 ]] && ( cd $1; gs ); }
 
+
+# trap "exec 1>&6 6>&-" EXIT
+trap "exec 6>&-" EXIT
+
+exec 6>&1 # 1>/dev/null
+
 gitit() {
-    trap "exec 1>&6 6>&-" EXIT
-    exec 6>&1 1>/dev/null
 
     repo="${PWD##*/}"
     if [ ! -r "$PWD/.git" ]; then
@@ -59,6 +63,6 @@ gitit() {
             git status >&6
         fi
     fi
-}
+} >/dev/null 2>&1
 
 gitit "$@"

@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "user_bin_dir_repo"
+version = "0.1.0"
+description = "Stuff"
+authors = ["Michael Treanor <26148512+skeptycal@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.24.0"
+beautiful = "soup"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.1.0"
+tox = "^3.20.0"
+autopep = "^1.5.4"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
