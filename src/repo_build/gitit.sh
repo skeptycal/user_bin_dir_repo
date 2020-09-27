@@ -9,7 +9,7 @@ setopt aliases
 [[ ${SHELL##*/} == 'zsh' ]] && set -o shwordsplit
 . $(which ssm)
 
-TEMPLATE_DIR=~/Documents/coding/cc_template
+TEMPLATE_DIR=$HOME/local_coding/cc_template
 
 # if [[ $(hash git-achievements >/dev/null 2>&1) -eq 0 ]] && alias git='git-achievements '
 
@@ -23,17 +23,17 @@ gitit() {
     trap "exec 1>&6 6>&-" EXIT
     exec 6>&1 1>/dev/null
 
+    repo="${PWD##*/}"
     if [ ! -r "$PWD/.git" ]; then
-        warn "Git repo not found in .../${PWD##*/}/.git"
+        warn "Git repo not found in .../${repo}/.git"
     else
-        gsok
-        if [ $? -eq 0 ]; then
-            canary "Git status ${GO:-}OK${RESET:-}: $PWD"
+        if gsok; then
+            canary "Git status ${GO:-}OK${RESET:-}: .../${repo}"
         else
             # -m "${*:-'Gitit bot: minor updates and formatting.'}"
             message="${*:-$(cat ~/.dotfiles/.stCommitMsg)}"
-            blue "GitIt - add and commit all updates."
-            green "  repo: ${PWD##*/}"
+            # blue $message
+            green "  repo: $repo"
             green "  message:  $message"
             [ -f .pre-commit-config.yaml ] || cp  $TEMPLATE_DIR/.pre-commit-config.yaml .
 
@@ -41,7 +41,8 @@ gitit() {
 
             # catch any changes from the server
             git stash
-            git pull origin master --rebase
+            git pull origin master --rebase >&6
+            git stash pop
 
             # first run through catches errors that are autofixed
             git add --all >/dev/null 2>&1
@@ -52,7 +53,7 @@ gitit() {
             pre-commit >&6
 
             git commit -m "$message" # --gpg-sign=$(which gpg_private)
-            git push --set-upstream origin "${PWD##*/}" >&6
+            git push --set-upstream origin "$repo" >&6
 
             git status >&6
         fi

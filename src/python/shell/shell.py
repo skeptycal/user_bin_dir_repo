@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-from ._util import BasicColors, Popen, Union, AnyStr, List
+from ._util import *
+from ._util import _debug_
+# from ._util import BasicColors, Popen, Union, AnyStr, List
 
 
 bc = BasicColors()
@@ -80,6 +82,7 @@ def shell(args: Union[AnyStr, List[AnyStr]],
           check: bool = True,
           ignore_errors: bool = True,
           encoding: str = DEFAULT_ENCODING,
+          debug: bool = _debug_,
           env: Dict = {},
           **kwargs) -> CompletedProcess:
     """ #### Run a shell command using and return a CompletedProcess Instance
@@ -135,7 +138,8 @@ def shell(args: Union[AnyStr, List[AnyStr]],
         """
 
     if not args:
-        raise ShellCommandError()
+        raise ShellCommandError(
+            f"The 'shell' command requires some arguments. None were provided.")
     # join sequences into strings and bytes
     if isinstance(args, (tuple, set, list)):
         if isinstance(args[0], str):
@@ -208,21 +212,21 @@ def shell(args: Union[AnyStr, List[AnyStr]],
 def repl(args: str = '', debug: int = 0) -> CompletedProcess:
     try:
         retval = shell(args=args, ignore_errors=True,
-                       capture_output=True, debug=SET_DEBUG)
+                       capture_output=True, debug=_debug_)
     except Exception as e:
         print('Error: ', e)
         return
 
     if retval.returncode:
-        print(f"{bc.LIME}Return Code: {bc.ATTN}{retval.returncode}{bc.RESET}")
-        print(f"{retval.stderr}")
+        print(f'{bc.LIME}Return Code: {bc.ATTN}{retval.returncode}{bc.RESET}')
+        print(f'{retval.stderr}')
     else:
         print(retval.stdout)
     return retval
 
 
-def ls(filenames: str = "", params: str = "--group-directories-first --color=tty -ghlAG ") -> str:
-    args = f"ls {filenames.strip()} {params.strip()}"
+def ls(filenames: str = '', params: str = '--group-directories-first --color=tty -ghlAG ') -> str:
+    args = f'ls {filenames.strip()} {params.strip()}'
     retval = repl(args)
     if retval.returncode:
         if retval.stderr:
@@ -233,3 +237,8 @@ def ls(filenames: str = "", params: str = "--group-directories-first --color=tty
 
 def check(args: str):
     return shell(args=args, verbose=False).returncode
+
+
+if __name__ == '__main__':
+    test_cmd: str = 'ls -lAhF'
+    print(shell(test_cmd))

@@ -1,31 +1,43 @@
-import typing as t
-from dis import disassemble
+# import typing as t
+from dis import dis
+from functools import wraps
+
 
 def disit(func):
+    """ Decorator for disassembly of code. """
+    @wraps(func)
     def dissed():
+        dis(func)
+        retval = func()
+        return retval
+    return dissed
 
 
-class DictLoader:
+class DictLoader(dict):
 
-    @disit
-    def __init__(self, colors: t.Dict[str,str] = {}):
-        if colors:
-            self.from_kwargs(colors=colors)
+    def __init__(self,  dict_colors={}):
+        dict.__init__(self)
+        if dict_colors:
+            self.from_kwargs(dict_colors)
 
-    def from_kwargs(self, **colors):
+    def from_kwargs(self, dict_colors):
         # obj = cls()
-        for name, code in colors.items():
+        for name, code in dict_colors.items():
             # print(name, ': ', code)
             setattr(self, name, code)
         # return obj
 
-test_colors = {
-    'Blue': 'Blue',
-    'Red': 'Red',
-    'Green': 'Green',
-}
 
-d = DictLoader(colors=test_colors)
+if __name__ == '__main__':
+    test_colors = {
+        'Blue': 'BlueValue',
+        'Red': 'RedValue',
+        'Green': 'GreenValue',
+    }
 
-print(dir(d))
-print(d.colors)
+    print(test_colors)
+
+    d = DictLoader(dict_colors=test_colors)
+
+    # print(dir(d))
+    print(d.Blue)

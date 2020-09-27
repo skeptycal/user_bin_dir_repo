@@ -1,9 +1,5 @@
 #!/usr/bin/env zsh
 # -*- coding: utf-8 -*-
-    # shellcheck shell=bash
-    # shellcheck source=/dev/null
-    # shellcheck disable=2128
-
 #? ############################# skeptycal.com
 #? binit - create symbolic links to [FILE(s)] in the current user's ~/bin folder
 # using GNU coreutils: <https://www.gnu.org/software/coreutils/>
