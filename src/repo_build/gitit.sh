@@ -39,7 +39,8 @@ gitit() {
 
 			pre-commit autoupdate
 
-            # catch any changes from the server (rare for me; I work alone a lot)
+            # catch any changes from the server
+            git stash
             git pull origin master --rebase
 
             # first run through catches errors that are autofixed
