@@ -21,10 +21,10 @@ gsok() { git status | grep 'nothing to commit'; }
 gstdir() { [[ -n $1 ]] && ( cd $1; gs ); }
 
 
-# trap "exec 1# >&6 6>&-" EXIT
-# trap "exec 6>&-" EXIT
+# trap "exec 1>&6 6>&-" EXIT
+trap "exec 6>&-" EXIT
 
-# exec 6>&1 # 1>/dev/null
+exec 6>&1 # 1>/dev/null
 
 gitit() {
 
@@ -46,7 +46,7 @@ gitit() {
 
             # catch any changes from the server
             git stash
-            git pull origin master --rebase # >&6
+            git pull origin master --rebase >&6
             git stash pop
 
             # first run through catches errors that are autofixed
@@ -55,12 +55,12 @@ gitit() {
 
             # second time shows persistent errors ...
             git add --all
-            pre-commit # >&6
+            pre-commit >&6
 
             git commit -m "$message" # --gpg-sign=$(which gpg_private)
-            git push --set-upstream origin $(git_current_branch) # >&6
+            git push --set-upstream origin $(git_current_branch) >&6
 
-            git status # >&6
+            git status >&6
         fi
     fi
 } >/dev/null 2>&1
