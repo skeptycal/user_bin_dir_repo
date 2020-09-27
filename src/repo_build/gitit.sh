@@ -37,7 +37,7 @@ gitit() {
             green "  message:  $message"
             [ -f .pre-commit-config.yaml ] || cp  $TEMPLATE_DIR/.pre-commit-config.yaml .
 
-			pre-commit autoupdate
+            pre-commit autoupdate
 
             # catch any changes from the server
             git stash
@@ -60,4 +60,4 @@ gitit() {
     fi
 }
 
-gitit $@
+gitit "$@"
