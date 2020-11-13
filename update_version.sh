@@ -5,10 +5,15 @@
 #? update-version.sh - Script to update the version information.
 # Reference: https://github.com/libyal/dtformats/blob/master/utils/update_version.sh
 
-DATE_VERSION=`date +"%Y%m%d"`;
-DATE_DPKG=`date -R`;
-EMAIL_DPKG="Joachim Metz <joachim.metz@gmail.com>";
+BASH_SOURCE="${0}"
+SCRIPT_NAME="${BASH_SOURCE##*/}"
+SCRIPT_PATH="${BASH_SOURCE%/*}"
+REPO_NAME="${SCRIPT_PATH##*/}"
 
-sed -i -e "s/^\(__version__ = \)'[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'$/\1'${DATE_VERSION}'/" dtformats/__init__.py
-sed -i -e "s/^\(dtformats \)([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-1)/\1(${DATE_VERSION}-1)/" config/dpkg/changelog
-sed -i -e "s/^\( -- ${EMAIL_DPKG}  \).*$/\1${DATE_DPKG}/" config/dpkg/changelog
+DATE_VERSION=`date +"%Y%m%d"`;
+DATE_PKG=`date -R`;
+EMAIL_PKG="Michael Treanor <skeptycal@gmail.com>";
+
+sed -i -e "s/^\(__version__ = \)'[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'$/\1'${DATE_VERSION}'/" "${REPO_NAME}/__init__.py"
+sed -i -e "s/^\(${REPO_NAME} \)([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-1)/\1(${DATE_VERSION}-1)/" "${SCRIPT_PATH}/CHANGELOG.md"
+sed -i -e "s/^\( -- ${EMAIL_PKG}  \).*$/\1${DATE_PKG}/" "${SCRIPT_PATH}/CHANGELOG.md"

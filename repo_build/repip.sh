@@ -4,11 +4,17 @@
   # shellcheck source=/dev/null
   # shellcheck disable=2178,2155
 
-. $(which ssm)
+. $(which ansi_colors)
 
 TEMPLATE_DIR=~/Documents/coding/cc_template
 
-pip_int() { $(which pip3) --version | cut -d ' ' -f 2 | tr -d '.'; }
+_pip=$( which pip3 )
+_python=$( which python3 )
+
+# integer "version" of pip version
+# 	e.g. pip version 20.2.4 would return 2024
+pip_int=$( $_pip --version | cut -d ' ' -f 2 | tr -d '.'; )
+
 pip_2020() { (( $(pip_int) > 2021 )) && echo '--use-feature=2020-resolver ' || echo ''; }
 pip20()  { "$(which pip3) ${*} $(pip_2020) "; }
 
